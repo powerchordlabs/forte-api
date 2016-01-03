@@ -20,8 +20,8 @@ The following options can be used to control the behavior of the api.
     * bearerToken  
     If a Bearer Token is already available, typically when the server has already created a token and injected it in to the client markup, the Api will add this token as an `Authorization` header for all enpoint requests. 
 
-### `forteApi.onAuthSuccess: (bearerToken) => {}`
-When the api successfully creates a new Bearer Token session this method will be invoked with the new bearerToken value.
+### `forteApi.onAuth: (err, bearerToken) => {}`
+When the api successfully creates a new Bearer Token session this method will be invoked with the new bearerToken value. If an error occured it will be returned via the err argument.
 
     // behavior:
         * forward fingerprint on first client request
