@@ -8,6 +8,15 @@ ForteAPI is a fluent api wrapper around the Powerchord Forte REST API that allow
 
 `$ npm install --save forte-api`
 
+## Features
+
+* **Fluent API**  
+The fluent API simplifies REST API access so you can focus on data and not HTTP
+* **Semi-Automatic token auth**  
+You simply provide secret keys, or a pre-existing token and ForteApi does the rest
+* **Client Fingerprinting**  
+By default ForteApi will perform a browser fingerprint on the client via a non-blocking background process, i.e. WebWorker. This can be disabled via options if legal requirements dictate.
+
 ## An Isomorphic usage exaple:
 
 #### server
@@ -104,6 +113,9 @@ Used to automatically generate routes for youfunctionr api requests.
     * `url: string`  
     `default: https://api.powerchord.io`  
     The base Api url.  
+    * `fingerPrintingEnabled: boolean` **client-side only**  
+    `default: true`  
+    If true, performs a browser fingerprint, once per session, via a non-blocking background process, i.e. WebWorker.
 
 The following examples show how you might create api instances for an isomorphic app on the server and client:
 #####server
@@ -205,27 +217,15 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 
 **advanced**
 
-Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite is complicated. Using [forte-conductor](todo) is recommended.
+Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite is complicated. Using [forte-conductor TODO:ADDLINK](todo) is recommended.
 
 ## ROADMAP
 
-
+Document and implement REST entity methods, e.g.:
 ```
-api.composite.query({...})
-
 api.location.get(123)
 api.location.add({...})
 api.location.update({...})
 api.location.delete(123)
-
-api.locations.query({...})
-
-api.locations('get', { status: active })
-
-    // behavior:
-        * forward fingerprint on first client request
-        * add Auth header, either via an existing bearerToken or using the checksum pub/priv behavior
-            // checksum = sha512(apiPrivateKey + apiPublicKey + UTCTimestamp)
-            // Authorization: Checksum {apiPublicKey} {UTCTimestamp} {checksum}
 ```
     
