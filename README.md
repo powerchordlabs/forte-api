@@ -213,6 +213,13 @@ api.log('error', 'This is bad man... really bad!', { exception: ex})
 api.log('fatal', 'GAME OVER!!!', { exception: ex})
 ```
 
+#### api.analytics.track(eventName, eventMeta)
+
+Writes an analytic event. The following events are supported:
+
+* pageview
+* TODO: grok events from product specs...
+
 #### api.composite.query(query)
 
 **advanced**
