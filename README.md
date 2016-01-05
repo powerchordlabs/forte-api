@@ -17,7 +17,7 @@ You simply provide secret keys, or a pre-existing token and ForteApi does the re
 * **Client Fingerprinting**  
 By default ForteApi will perform a browser fingerprint on the client via a non-blocking background process, i.e. WebWorker. This can be disabled via options if legal requirements dictate.
 
-## An Isomorphic usage exaple:
+## An Isomorphic usage example:
 
 #### server
 
@@ -104,9 +104,9 @@ Used to manage Authentication for api requests.
     * `bearerToken: string`  
     Used by default if not null. The token will be added as an `Authorization` header for all endpoint requests. 
     * `privateKey: string`, `publicKey: string` **server-side only**  
-    If `bearerToken` is null an attempt will be made to use the `publicKey` and `privateKey` fields to generate a bearerToken for you. You can use the `on('auth', cb)` handler to subscribe to the 'auth' event and capture the bearerToken for later use, e.g. injecting the token in a client-side global.
+    If `bearerToken` is null, an attempt will be made to use the `publicKey` and `privateKey` fields to generate a bearerToken for you. You can use the `on('auth', cb)` handler to subscribe to the 'auth' event and capture the bearerToken for later use, e.g. injecting the token in a client-side global.
 * `organization: object`  
-Used to automatically generate routes for youfunctionr api requests.
+Used to automatically generate routes for your api requests.
     * `ID: string`
     * `parentID: string`   
 * `options: object`  
@@ -217,7 +217,7 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 
 **advanced**
 
-Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite is complicated. Using [forte-conductor TODO:ADDLINK](todo) is recommended.
+Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite are complicated. Using [forte-conductor TODO:ADDLINK](todo) is recommended.
 
 ## ROADMAP
 
