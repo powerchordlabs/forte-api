@@ -17,7 +17,21 @@ You simply provide secret keys, or a pre-existing token and ForteApi does the re
 * **Client Fingerprinting**  
 By default ForteApi will perform a browser fingerprint on the client via a non-blocking background process, i.e. WebWorker. This can be disabled via options if legal requirements dictate.
 
-## An Isomorphic usage example:
+# Documentation
+* [Quick Start](#quick-start)  
+* [API](#api)
+    * [Constructor](#constructor)
+    * [Events](#events)
+    * [Endpoints](#endpoints)
+        * [log](#log)
+        * [analytics](#analytics)
+        * [composite](#composite)
+        * [organizations](#organizations)
+        * [locations](#locations)
+* [RoadMap](#roadmap)
+
+## Quick Start
+An Isomorphic usage example:
 
 #### server
 
@@ -180,9 +194,9 @@ api.on('auth', (err, token) => {
 })
 ```
 
-### Endpoint Methods
+### Endpoints
 
-Endpoint methods are the main progamming point for api data access. They are the fluent abstractions of the REST API endpoints. All of the endpoint methods return promises to allow chaining.
+Endpoints are the main progamming point for api data access. They are the fluent abstractions of the REST API endpoints. All of the endpoints return promises to allow chaining.
 
 An example using api.log:
 
@@ -197,9 +211,10 @@ try{
 }
 ```
 
-#### api.log(level, message, [meta])
+#### Log
+##### api.log(level, message, [meta])
 
-Writes a log message, and optional meta object, to the api at the specified `level`, where level is one of the following:
+Writes a log `message`, and optional `meta` object, to the api at the specified `level`, where level is one of the following:
 * trace, debug, info, warn, error, fatal
 
 A few contrived examples:
@@ -213,14 +228,60 @@ api.log('error', 'This is bad man... really bad!', { exception: ex})
 api.log('fatal', 'GAME OVER!!!', { exception: ex})
 ```
 
-#### api.analytics.track(eventName, eventMeta)
+#### Organizations
+##### api.organizations.getAll({filter}): [object]  
+Returns all organizations matching the filter option(s).
 
-Writes an analytic event. The following events are supported:
+```js
+api.organizations.getAll({status: 'active'}) // return all active items
+```
 
-* pageview
-* TODO: grok events from product specs...
+##### api.organizations.getOne({filter}): object  
+Returns one organization matching the filter option(s). 
 
-#### api.composite.query(query)
+In the event your filter matches multple items, only the first one will be returned. 
+
+```js
+api.organizations.getOne({trunkID: '1'}) // return the item with trunkID=1
+```
+
+#### Locations
+
+
+#### Analytics
+##### api.analytics.track(events)
+
+Writes analytic events to the platform API. You can track one or more events with one call.
+
+``` js
+api.analytics.track({ 
+    'pageview': {
+        title: 'Hello World', 
+        location: 'http://my.site.com/welcome'
+    }
+})
+```
+
+###### Supported Events  
+
+* `pageview`
+    * title: required
+    * location: required
+
+##### api.analytics.track(type, meta)
+
+Writes one of the [supported events](#supported-events) event using the specified type and meta.
+
+``` js
+api.analytics.track('pageview', {
+        title: 'Hello World', 
+        location: 'http://my.site.com/welcome'
+    }
+)
+```
+
+#### Composite
+##### api.composite.query(query)
 
 **advanced**
 
