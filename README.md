@@ -24,10 +24,9 @@ By default ForteApi will perform a browser fingerprint on the client via a non-b
     * [Events](#events)
     * [Endpoints](#endpoints)
         * [log](#log)
+        * [organizations](#organizations)
         * [analytics](#analytics)
         * [composite](#composite)
-        * [organizations](#organizations)
-        * [locations](#locations)
 * [RoadMap](#roadmap)
 
 ## Quick Start
@@ -245,9 +244,6 @@ In the event your filter matches multple items, only the first one will be retur
 api.organizations.getOne({trunkID: '1'}) // return the item with trunkID=1
 ```
 
-#### Locations
-
-
 #### Analytics
 ##### api.analytics.track(events)
 
@@ -281,19 +277,56 @@ api.analytics.track('pageview', {
 ```
 
 #### Composite
+*advanced topic*  
+
 ##### api.composite.query(query)
+Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite are complicated. Using [forte-conductor](https://github.com/powerchordinc/forte-conductor) is recommended.
 
-**advanced**
-
-Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite are complicated. Using [forte-conductor TODO:ADDLINK](todo) is recommended.
+```js
+api.composite.query({
+  "screen": {
+    "tenant": {
+      "_resourceDefined": true,
+      "_resource": "tenants",
+      "_paramsRequested": true,
+      "_params": {
+        "activeContext": true
+      },
+      "_singular": true
+    },
+    "storeNewsContent": {
+      "_resourceDefined": true,
+      "_resource": "content",
+      "_paramsRequested": true,
+      "_params": {
+        "key": "cmssn"
+      },
+      "_singular": true
+    },
+    "fma": {
+      "_resourceDefined": true,
+      "_resource": "content-fma",
+      "_paramsRequested": false,
+      "_params": {
+        
+      },
+      "_singular": false
+    },
+    "featuredProducts": {
+      "_resourceDefined": true,
+      "_resource": "products",
+      "_paramsRequested": true,
+      "_params": {
+        "featured": true
+      },
+      "_singular": false
+    }
+  },)
+```
 
 ## ROADMAP
 
-Document and implement REST entity methods, e.g.:
-```
-api.location.get(123)
-api.location.add({...})
-api.location.update({...})
-api.location.delete(123)
-```
+* api.locations.getOne/getAll support
+* api.content.getOne/getAll support
+
     
