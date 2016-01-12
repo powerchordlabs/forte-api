@@ -213,8 +213,14 @@ try{
 #### Log
 ##### api.log(level, message, [meta])
 
-Writes a log `message`, and optional `meta` object, to the api at the specified `level`, where level is one of the following:
-* trace, debug, info, warn, error, fatal
+Writes a log message to the PowerChord platform.
+
+* `level: string`  
+Supported levels: `trace, debug, info, warn, error, fatal`  
+* `message: string`  
+The message to write.  
+* `meta: object`  
+An optional json object to write.
 
 A few contrived examples:
 ``` js
@@ -230,6 +236,9 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 #### Organizations
 ##### api.organizations.getAll(filter): [object]  
 Returns all organizations matching the `filter` option(s).
+
+* `filter: object`  
+A json filter object that is used to filter results from the api.
 
 ```js
 api.organizations.getAll({status: 'active'}) // return all active items
