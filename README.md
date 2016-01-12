@@ -228,14 +228,14 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 ```
 
 #### Organizations
-##### api.organizations.getAll({filter}): [object]  
-Returns all organizations matching the filter option(s).
+##### api.organizations.getAll(filter): [object]  
+Returns all organizations matching the `filter` option(s).
 
 ```js
 api.organizations.getAll({status: 'active'}) // return all active items
 ```
 
-##### api.organizations.getOne({filter}): object  
+##### api.organizations.getOne(filter): object  
 Returns one organization matching the filter option(s). 
 
 In the event your filter matches multple items, only the first one will be returned. 
@@ -247,33 +247,32 @@ api.organizations.getOne({trunkID: '1'}) // return the item with trunkID=1
 #### Analytics
 ##### api.analytics.track(events)
 
-Writes analytic events to the platform API. You can track one or more events with one call.
+Writes one or more [supported events](#supported-analytics-events) to the platform API.
 
 ``` js
 api.analytics.track({ 
     'pageview': {
         title: 'Hello World', 
-        location: 'http://my.site.com/welcome'
+        location: 'http://my.site.com/welcome?u=me'
     }
 })
 ```
 
-###### Supported Events  
+###### Supported Analytics Events  
 
-* `pageview`
-    * title: required
-    * location: required
-
-##### api.analytics.track(type, meta)
-
-Writes one of the [supported events](#supported-events) event using the specified type and meta.
+##### pageview  
+* `title: string`  
+The title of the page.
+* `location: string`   
+The full url of the page excluding the hash.
 
 ``` js
-api.analytics.track('pageview', {
+api.analytics.track({ 
+    'pageview': {
         title: 'Hello World', 
-        location: 'http://my.site.com/welcome'
+        location: 'http://my.site.com/welcome?u=me'
     }
-)
+})
 ```
 
 #### Composite
@@ -321,7 +320,7 @@ api.composite.query({
       },
       "_singular": false
     }
-  },)
+  })
 ```
 
 ## ROADMAP
