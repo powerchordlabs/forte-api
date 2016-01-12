@@ -1,0 +1,30 @@
+{
+  "name": "forte-api",
+  "version": "1.0.0",
+  "description": "A fluent wrapper for the Powerchord Forte REST API",
+  "main": "index.js",
+  "scripts": {
+    "setup": "./node_modules/bower/bin/bower install --config.interactive=false",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/powerchordinc/forte-api.git"
+  },
+  "keywords": [
+    "forte",
+    "api"
+  ],
+  "author": "PowerChord, Inc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/powerchordinc/forte-api/issues"
+  },
+  "homepage": "https://github.com/powerchordinc/forte-api#readme",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.3.4",
+    "supertest": "^1.1.0"
+  }
+}
