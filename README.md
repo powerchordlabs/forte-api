@@ -112,6 +112,7 @@ import ForteApi from 'forte-api'
 let api = ForteApi(credentials, organization, options);
 ```
 
+###### args
 * `credentials: object`  
 Used to manage Authentication for api requests. 
     * `bearerToken: string`  
@@ -129,49 +130,6 @@ Used to automatically generate routes for your api requests.
     * `fingerPrintingEnabled: boolean` **client-side only**  
     `default: true`  
     If true, performs a browser fingerprint, once per session, via a non-blocking background process, i.e. WebWorker.
-
-The following examples show how you might create api instances for an isomorphic app on the server and client:
-#####server
-``` js
-// a global to be injected in to your html markup for client-side use
-CLIENT_GLOBALS = {
-    // the org we are focused on
-    Organization: { ID: 'myorgid', parentID: 'myparentorgid'}, 
-    // placeholder for our token that will be populated via api.on('auth', cb)
-    BearerToken = null;
-}
-
-// create a new api instance using secret keys
-let api = ForteApi( 
-    {
-        apiPrivateKey: 'myPrivateKey', 
-        apiPublicKey: 'myPublicKey',
-    },
-    CLIENT_GLOBALS.Organization
-)
-
-// check for err, else capture token
-api.on('auth', (err, token) => {
-    if(err) {
-        console.log('An api auth error occurred:', err)
-        return
-    }
-
-    console.log('Api auth success:', token)
-    CLIENT_GLOBALS.BearerToken = token
-})
-```
-
-#####client
-``` js
-// presuming CLIENT_GLOBALS was injected in your markup by the server
-let api = ForteApi( 
-    {
-        bearerToken: CLIENT_GLOBALS.BearerToken
-    },
-    CLIENT_GLOBALS.Organization
-)
-```
 
 ### Events
 
@@ -215,8 +173,10 @@ try{
 
 Writes a log message to the PowerChord platform.
 
+###### args
 * `level: string`  
-Supported levels: `trace, debug, info, warn, error, fatal`  
+The log level.  
+*supported values:* `trace, debug, info, warn, error, fatal`  
 * `message: string`  
 The message to write.  
 * `meta: object`  
@@ -237,17 +197,20 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 ##### api.organizations.getAll(filter): [object]  
 Returns all organizations matching the `filter` option(s).
 
+###### args
 * `filter: object`  
-A json filter object that is used to filter results from the api.
+A json object that is used to filter results from the api.
 
 ```js
 api.organizations.getAll({status: 'active'}) // return all active items
 ```
 
 ##### api.organizations.getOne(filter): object  
-Returns one organization matching the filter option(s). 
+Returns one organization matching the filter option(s). In the event your filter matches multple items, only the first one will be returned. 
 
-In the event your filter matches multple items, only the first one will be returned. 
+###### args
+* `filter: object`  
+A json object that is used to filter results from the api.
 
 ```js
 api.organizations.getOne({trunkID: '1'}) // return the item with trunkID=1
@@ -256,7 +219,12 @@ api.organizations.getOne({trunkID: '1'}) // return the item with trunkID=1
 #### Analytics
 ##### api.analytics.track(events)
 
-Writes one or more [supported events](#supported-analytics-events) to the platform API.
+Writes events to the platform API.
+
+###### args
+* `events: object`  
+A json object containing one or more [supported events](#supported-analytics-events).
+
 
 ``` js
 api.analytics.track({ 
@@ -289,6 +257,9 @@ api.analytics.track({
 
 ##### api.composite.query(query)
 Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite are complicated. Using [forte-conductor](https://github.com/powerchordinc/forte-conductor) is recommended.
+
+###### args
+* `query: object`  
 
 ```js
 api.composite.query({
