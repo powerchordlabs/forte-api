@@ -21,6 +21,7 @@ By default ForteApi will perform a browser fingerprint on the client via a non-b
 * [Quick Start](#quick-start)  
 * [API](#api)
     * [Constructor](#constructor)
+      * [Organization Scopes](#organization-scopes)
     * [Events](#events)
     * [Endpoints](#endpoints)
         * [log](#log)
@@ -104,12 +105,22 @@ let results = api.composite
 
 ### Constructor
 
-#### ForteApi(credentials, organization, [options])
+#### ForteApi(credentials, scope, [options])
 Creates an instance of the Forte Api.
 
 ``` js
 import ForteApi from 'forte-api'
-let api = ForteApi(credentials, organization, options);
+
+let scope = {
+  trunk: 'TRUNKID',
+  branch: 'BRANCHID'
+}
+
+// defaults
+let api = ForteApi(credentials, scope); 
+
+// override api options
+let api = ForteApi(credentials, scope, options); 
 ```
 
 ###### args
@@ -119,10 +130,11 @@ Used to manage Authentication for api requests.
     Used by default if not null. The token will be added as an `Authorization` header for all endpoint requests. 
     * `privateKey: string`, `publicKey: string` **server-side only**  
     If `bearerToken` is null, an attempt will be made to use the `publicKey` and `privateKey` fields to generate a bearerToken for you. You can use the `on('auth', cb)` handler to subscribe to the 'auth' event and capture the bearerToken for later use, e.g. injecting the token in a client-side global.
-* `organization: object`  
-Used to automatically generate routes for your api requests.
-    * `ID: string`
-    * `parentID: string`   
+* `scope: object`  
+  * `trunk: string`  
+  Sets the trunk scope for all requests. See [Organization Scopes](#organization-scopes)
+  * `branch: string`  
+  Optional: sets the branch scope for all requests. Note, that an error will be thrown if `branch` is null when accessing endpoints that require it. See [Organization Scopes](#organization-scopes)
 * `options: object`  
     * `url: string`  
     `default: https://api.powerchord.io`  
@@ -130,6 +142,50 @@ Used to automatically generate routes for your api requests.
     * `fingerPrintingEnabled: boolean` **client-side only**  
     `default: true`  
     If true, performs a browser fingerprint, once per session, via a non-blocking background process, i.e. WebWorker.
+
+### Organization Scopes
+All api requests require at least a `trunk` scope and the majority of api calls will also require a `branch` scope to be able to access your data. 
+
+The [constructor](#constructor) requires a `scope.trunk` param, but for requests requiring `branch` scope you can also use `api.withBranch()`.
+
+This is particularly useful on the server side, where you may have non-branch api calls during bootstrapping, as well as branch scoped calls during individual page requests.
+
+```js
+
+var creds = {...}
+var scope = { trunk: 'TRUNKID' } // note the lack of a branch
+
+var api = ForteApi(creds, scope, opts)
+
+// do some non-branch calls via lifecycle middleware...
+app.use(lifecycle(api))
+
+app.get('*', (req, res, next) => {
+  // create a branch-scoped api instance for the app to use
+  branchApi = api.withBranch(req.lifecycle.scope.branch)
+
+  render(<App api={branchApi} />)
+})
+```
+
+#### api.withBranch(ID)
+A convenience method that creates a new api scoped to the specified `ID`. All configuration is replicated from the original api instance.
+
+######args
+* `ID: string`  
+The identifier of the `branch` that future request should be scoped to.
+
+```js
+var scope = { trunk: 'TRUNKID' }
+var api = ForteApi(creds, scope).withBranch('BRANCHID')
+
+```
+
+Or the equivalent:
+```js
+var scope = { trunk: 'TRUNKID', branch: 'BRANCHID' }
+var api = ForteApi(creds, scope)
+```
 
 ### Events
 
@@ -194,7 +250,7 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 ```
 
 #### Organizations
-##### api.organizations.getAll(filter): [object]  
+##### api.organizations.getMany(filter): [object]  
 Returns all organizations matching the `filter` option(s).
 
 ###### args
@@ -202,17 +258,20 @@ Returns all organizations matching the `filter` option(s).
 A json object that is used to filter results from the api.
 
 ```js
-api.organizations.getAll({status: 'active'}) // return all active items
+api.organizations.getMany({status: 'active'}) // return all active items
 ```
 
 ##### api.organizations.getOne(filter): object  
 Returns one organization matching the filter option(s). In the event your filter matches multple items, only the first one will be returned. 
 
 ###### args
-* `filter: object`  
-A json object that is used to filter results from the api.
+* `filter: string || object`  
+A string trunkID or a json object that is used to filter results from the api.
 
 ```js
+api.organizations.getOne('1') // return the item with trunkID=1
+
+// is equivalent to
 api.organizations.getOne({trunkID: '1'}) // return the item with trunkID=1
 ```
 
@@ -305,7 +364,7 @@ api.composite.query({
 
 ## ROADMAP
 
-* api.locations.getOne/getAll support
-* api.content.getOne/getAll support
+* api.locations.getOne/getMany support
+* api.content.getOne/getMany support
 
     
