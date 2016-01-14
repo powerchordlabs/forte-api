@@ -241,7 +241,6 @@ The message to write.
 * `meta: {Object}`  
 An optional json object to write.
 
-A few contrived examples:
 ``` js
 import ForteApi from 'forte-api'
 let api = ForteApi(credentials, organization, options);
