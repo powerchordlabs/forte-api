@@ -204,15 +204,15 @@ api.on('auth', (err, token) => {
 
 Endpoints are the main progamming point for api data access. They are the fluent abstractions of the REST API endpoints. All of the endpoints return promises to allow chaining.
 
-``` js
-import ForteApi from 'forte-api'
-let api = ForteApi(credentials, organization, options);
-
-try{
-    // some bad code...
-}catch(ex) {
-    api.log.error(ex.message, ex.stack)
-}
+```js
+api.organizations.getOne('orgid').then(
+  (response) => {
+    console.log('success:', response.data)
+  },
+  (response) => {
+    console.log('error:', response.statusText)
+  }
+)
 ```
 
 ##### Responses
@@ -227,16 +227,6 @@ HTTP status text of the response.
 * `headers: {Object}`  
 HTTP headers of the response.
 
-```js
-api.organizations.getOne('orgid').then(
-  (response) => {
-    console.log('success:', response.data)
-  },
-  (response) => {
-    console.log('error:', response.statusText)
-  }
-)
-```
 
 #### Log
 ##### api.log(level, message, [meta])
