@@ -227,7 +227,6 @@ HTTP status text of the response.
 * `headers: {Object}`  
 HTTP headers of the response.
 
-
 #### Log
 ##### api.log(level, message, [meta])
 
@@ -261,8 +260,6 @@ Returns an array of organization objects matching the `filter` option(s).
 * `filter: object`  
 A json object that is used to filter results from the api.
 
-###### response: see [Responses](#responses)
-
 ```js
 // return all active items
 api.organizations.getMany({status: 'active'}).then((response) => {
@@ -276,9 +273,6 @@ Returns one organization matching the filter option(s). In the event your filter
 ###### args:
 * `filter: string || object`  
 A string trunkID or a json object that is used to filter results from the api.
-
-###### response:
-see [Responses](#responses)
 
 ```js
 // return the item with trunkID=1
@@ -298,7 +292,7 @@ api.organizations.getOne({trunkID: '1'}).then((response) => {
 
 Writes events to the platform API.
 
-###### args
+###### args:
 * `events: object`  
 A json object containing one or more [supported events](#supported-analytics-events).
 
