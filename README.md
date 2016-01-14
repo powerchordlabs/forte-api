@@ -144,11 +144,11 @@ Used to manage Authentication for api requests.
     If true, performs a browser fingerprint, once per session, via a non-blocking background process, i.e. WebWorker.
 
 ### Organization Scopes
-All api requests require at least a `trunk` scope and the majority of api calls will also require a `branch` scope to be able to access your data. 
+All api requests require at least a `trunk` scope and most also require a `branch` scope to be able to access your data. 
 
-The [constructor](#constructor) requires a `scope.trunk` param, but for requests requiring `branch` scope you can also use `api.withBranch()`.
+The [constructor](#constructor) requires a `scope.trunk` param, but for requests requiring `branch` scope you can also use `api.withBranch()`. This is particularly useful on the server side, where you may have non-branch api calls during bootstrapping, as well as branch scoped calls during individual page requests.
 
-This is particularly useful on the server side, where you may have non-branch api calls during bootstrapping, as well as branch scoped calls during individual page requests.
+For example:
 
 ```js
 
