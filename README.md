@@ -28,33 +28,30 @@ By default ForteApi will perform a browser fingerprint on the client via a non-b
         * [organizations](#organizations)
         * [analytics](#analytics)
         * [composite](#composite)
-* [RoadMap](#roadmap)
 
 ## Quick Start
 An Isomorphic usage example:
 
-#### server
-
+##### server.js
 ``` js
 import ForteApi from 'forte-api'
 
 // a global to be injected in to your html markup
 CLIENT_GLOBALS = {
-    Organization: {
-        ID: 'myorgid',
-        parentID: 'myparentorgid'
+    scope: {
+        trunk: 'TRUNKID'
+        branch: 'BRANCHID',
     },
     BearerToken = null;
 }
 
+let creds = {
+  apiPrivateKey: 'PRIVATEKEY', 
+  apiPublicKey: 'PUBLICKEY',
+}
+
 // create a new api instance using secret keys
-let api = ForteApi( 
-    {
-        apiPrivateKey: 'myPrivateKey', 
-        apiPublicKey: 'myPublicKey',
-    },
-    CLIENT_GLOBALS.Organization
-)
+let api = ForteApi(creds, CLIENT_GLOBALS.scope)
 
 // listen for authentication events to capture the token
 api.on('auth', (err, token) => {
@@ -67,39 +64,37 @@ api.on('auth', (err, token) => {
     CLIENT_GLOBALS.BearerToken = token
 })
 
-// the following call establishes a session and grabs data
-// it will also trigger the 'auth' event which we are subscribed to above
-let results = api.composite
-    .query({...})
-    .then(composed =>
-        api.location.get(id).then(location => return { composed, location })
-    )
-
-// at the end of the render cycle, the GLOBAL is injected in to the client markup
-
-
+app.get('*', function(req, res, next) => {
+  res.send(ReactDOM.renderToString(<App api={api} />))
+})
 ```
 
-#### client
-
+##### client.js
 ``` js
 import ForteApi from 'forte-api'
 
 // presuming CLIENT_GLOBALS was injected in your markup by the server
-let api = ForteApi( 
-    {
-        bearerToken: CLIENT_GLOBALS.BearerToken
-    },
-    CLIENT_GLOBALS.Organization
-)
+let creds = { bearerToken: CLIENT_GLOBALS.BearerToken }
 
+let api = ForteApi(creds, CLIENT_GLOBALS.scope)
+
+ReactDOM.render(<App api={api} />, document.getElementById('app'));
+```
+
+##### app.js
+``` js
 
 let results = api.composite
     .query({...})
     .then(composed =>
-        api.location.get(id).then(location => return { composed, location })
+        return api.location.get(id)
+          .then(location => return { 
+            composed.data, 
+            location.data
+          })
     )
 ```
+
 
 ## API
 
@@ -147,8 +142,6 @@ Used to manage Authentication for api requests.
 All api requests require at least a `trunk` scope and most also require a `branch` scope to be able to access your data. 
 
 The [constructor](#constructor) requires a `scope.trunk` param, but for requests requiring `branch` scope you can also use `api.withBranch()`. This is particularly useful on the server side, where you may have non-branch api calls during bootstrapping, as well as branch scoped calls during individual page requests.
-
-For example:
 
 ```js
 
@@ -211,8 +204,6 @@ api.on('auth', (err, token) => {
 
 Endpoints are the main progamming point for api data access. They are the fluent abstractions of the REST API endpoints. All of the endpoints return promises to allow chaining.
 
-An example using api.log:
-
 ``` js
 import ForteApi from 'forte-api'
 let api = ForteApi(credentials, organization, options);
@@ -222,6 +213,29 @@ try{
 }catch(ex) {
     api.log.error(ex.message, ex.stack)
 }
+```
+
+##### Responses
+All Endpoints return promises that have the following response signature for both `success/error` handlers:
+
+* `data: {string|Object}`  
+The deserialized response body.
+* `status: {number}`  
+HTTP status code of the response.
+* `statusText: {string}`  
+HTTP status text of the response.
+* `headers: {Object}`  
+HTTP headers of the response.
+
+```js
+api.organizations.getOne('orgid').then(
+  (response) => {
+    console.log('success:', response.data)
+  },
+  (response) => {
+    console.log('error:', response.statusText)
+  }
+)
 ```
 
 #### Log
@@ -250,29 +264,43 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 ```
 
 #### Organizations
-##### api.organizations.getMany(filter): [object]  
-Returns all organizations matching the `filter` option(s).
+##### api.organizations.getMany(filter): [{organization}, ...]
+Returns an array of organization objects matching the `filter` option(s).
 
-###### args
+###### args:
 * `filter: object`  
 A json object that is used to filter results from the api.
 
+###### response: see [Responses](#responses)
+
 ```js
-api.organizations.getMany({status: 'active'}) // return all active items
+// return all active items
+api.organizations.getMany({status: 'active'}).then((response) => {
+  console.log('organziations:', response.data)
+})
 ```
 
-##### api.organizations.getOne(filter): object  
+##### api.organizations.getOne(filter): {organization}  
 Returns one organization matching the filter option(s). In the event your filter matches multple items, only the first one will be returned. 
 
-###### args
+###### args:
 * `filter: string || object`  
 A string trunkID or a json object that is used to filter results from the api.
 
+###### response:
+see [Responses](#responses)
+
 ```js
-api.organizations.getOne('1') // return the item with trunkID=1
+// return the item with trunkID=1
+api.organizations.getOne('1').then((response) => {
+  console.log('organziation:', response.data)
+})
 
 // is equivalent to
-api.organizations.getOne({trunkID: '1'}) // return the item with trunkID=1
+// return the item with trunkID=1
+api.organizations.getOne({trunkID: '1'}).then((response) => {
+  console.log('organziation:', response.data)
+})
 ```
 
 #### Analytics
@@ -360,11 +388,4 @@ api.composite.query({
       "_singular": false
     }
   })
-```
-
-## ROADMAP
-
-* api.locations.getOne/getMany support
-* api.content.getOne/getMany support
-
-    
+```    
