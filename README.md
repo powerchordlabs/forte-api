@@ -6,7 +6,7 @@ ForteAPI is a fluent api wrapper around the Powerchord Forte REST API that allow
 
 ## Install
 
-`$ npm install --save forte-api`
+`$ npm i -S forte-api`
 
 ## Features
 
@@ -119,22 +119,22 @@ let api = ForteApi(credentials, scope, options);
 ```
 
 ###### args
-* `credentials: object`  
+* `credentials: {Object}`  
 Used to manage Authentication for api requests. 
-    * `bearerToken: string`  
+    * `bearerToken: {string}`  
     Used by default if not null. The token will be added as an `Authorization` header for all endpoint requests. 
-    * `privateKey: string`, `publicKey: string` **server-side only**  
+    * `privateKey: {string}`, `publicKey: {string}` **server-side only**  
     If `bearerToken` is null, an attempt will be made to use the `publicKey` and `privateKey` fields to generate a bearerToken for you. You can use the `on('auth', cb)` handler to subscribe to the 'auth' event and capture the bearerToken for later use, e.g. injecting the token in a client-side global.
-* `scope: object`  
-  * `trunk: string`  
+* `scope: {Object}`  
+  * `trunk: {string}`  
   Sets the trunk scope for all requests. See [Organization Scopes](#organization-scopes)
-  * `branch: string`  
+  * `branch: {string}`  
   Optional: sets the branch scope for all requests. Note, that an error will be thrown if `branch` is null when accessing endpoints that require it. See [Organization Scopes](#organization-scopes)
-* `options: object`  
-    * `url: string`  
+* `options: {Object}`  
+    * `url: {string}`  
     `default: https://api.powerchord.io`  
     The base Api url.  
-    * `fingerPrintingEnabled: boolean` **client-side only**  
+    * `fingerPrintingEnabled: {boolean}` **client-side only**  
     `default: true`  
     If true, performs a browser fingerprint, once per session, via a non-blocking background process, i.e. WebWorker.
 
@@ -164,8 +164,8 @@ app.get('*', (req, res, next) => {
 #### api.withBranch(ID)
 A convenience method that creates a new api scoped to the specified `ID`. All configuration is replicated from the original api instance.
 
-######args
-* `ID: string`  
+###### args:
+* `ID: {string}`  
 The identifier of the `branch` that future request should be scoped to.
 
 ```js
@@ -232,13 +232,13 @@ HTTP headers of the response.
 
 Writes a log message to the PowerChord platform.
 
-###### args
-* `level: string`  
+###### args:
+* `level: {string}`  
 The log level.  
 *supported values:* `trace, debug, info, warn, error, fatal`  
-* `message: string`  
+* `message: {string}`  
 The message to write.  
-* `meta: object`  
+* `meta: {Object}`  
 An optional json object to write.
 
 A few contrived examples:
@@ -257,7 +257,7 @@ api.log('fatal', 'GAME OVER!!!', { exception: ex})
 Returns an array of organization objects matching the `filter` option(s).
 
 ###### args:
-* `filter: object`  
+* `filter: {Object}`  
 A json object that is used to filter results from the api.
 
 ```js
@@ -271,7 +271,7 @@ api.organizations.getMany({status: 'active'}).then((response) => {
 Returns one organization matching the filter option(s). In the event your filter matches multple items, only the first one will be returned. 
 
 ###### args:
-* `filter: string || object`  
+* `filter: {string|Object}`  
 A string trunkID or a json object that is used to filter results from the api.
 
 ```js
@@ -292,7 +292,7 @@ api.organizations.getOne({trunkID: '1'}).then((response) => {
 Writes events to the platform API.
 
 ###### args:
-* `events: object`  
+* `events: {Object}`  
 A json object containing one or more [supported events](#supported-analytics-events).
 
 
@@ -308,9 +308,9 @@ api.analytics.track({
 ###### Supported Analytics Events  
 
 ##### pageview  
-* `title: string`  
+* `title: {string}`  
 The title of the page.
-* `location: string`   
+* `location: {string}`   
 The full url of the page excluding the hash.
 
 ``` js
@@ -328,8 +328,8 @@ api.analytics.track({
 ##### api.composite.query(query)
 Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite are complicated. Using [forte-conductor](https://github.com/powerchordinc/forte-conductor) is recommended.
 
-###### args
-* `query: object`  
+###### args:
+* `query: {Object}`  
 
 ```js
 api.composite.query({
