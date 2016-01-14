@@ -281,7 +281,6 @@ api.organizations.getOne('1').then((response) => {
 })
 
 // is equivalent to
-// return the item with trunkID=1
 api.organizations.getOne({trunkID: '1'}).then((response) => {
   console.log('organziation:', response.data)
 })
