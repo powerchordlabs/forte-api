@@ -150,8 +150,11 @@ var scope = { trunk: 'TRUNKID' } // note the lack of a branch
 
 var api = ForteApi(creds, scope, opts)
 
-// do some non-branch calls via lifecycle middleware...
+// use lifecycle middleware to resolve scope
 app.use(lifecycle(api))
+
+// do some non-branch calls via lifecycle middleware...
+...
 
 app.get('*', (req, res, next) => {
   // create a branch-scoped api instance for the app to use
