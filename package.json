@@ -4,8 +4,8 @@
   "description": "A fluent wrapper for the Powerchord Forte REST API",
   "main": "index.js",
   "scripts": {
-    "setup": "./node_modules/bower/bin/bower install --config.interactive=false",
-    "test": "mocha"
+    "test": "mocha",
+    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha"
   },
   "repository": {
     "type": "git",
@@ -26,5 +26,8 @@
     "istanbul": "^0.4.2",
     "mocha": "^2.3.4",
     "supertest": "^1.1.0"
+  },
+  "dependencies": {
+    "implementjs": "^0.3.0"
   }
 }
