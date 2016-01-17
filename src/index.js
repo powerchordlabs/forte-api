@@ -87,7 +87,8 @@ function verifyOptions(options) {
 	if(options.url !== undefined) {
 		impl.implements(options, { url: impl.S })
 	}
-	
+
+	/* istanbul ignore else */
 	if(options.fingerPrintingEnabled !== undefined) {
 		impl.implements(options, { fingerPrintingEnabled: impl.B })
 	}
