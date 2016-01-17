@@ -1,4 +1,3 @@
-var impl = require('implementjs')
 var assign = require('./util').assign
 
 exports = module.exports = createAPI
@@ -43,35 +42,25 @@ function verifyArgs(credentials, scope, options) {
 	verifyOptions(options)
 }
 
-var credentialBearerImpl = {
-	bearerToken: impl.S
-}
-
-var credentialSharedKeyImpl = {
-	privateKey: impl.S,
-	publicKey: impl.S,
-}
-
 function verifyCredentials(credentials) {
-	if(!credentials){
-		throw impl.NotImplementedError
+	if(typeof credentials === 'undefined'){
+		throw new InvalidArgumentError('credentials')
 	}
 
 	if(credentials.bearerToken !== undefined) {
-		impl.implements(credentials, credentialBearerImpl)
+		if(typeof credentials.bearerToken !== 'string'){
+			throw new InvalidArgumentError('credentials.bearerToken')
+		}
 		return
 	}
 
-	impl.implements(credentials, credentialSharedKeyImpl)
-}
+	if(typeof credentials.privateKey !== 'string'){
+		throw new InvalidArgumentError('credentials.privateKey')
+	}
 
-var trunkScopeImpl = {
-	trunk: impl.S
-}
-
-var branchScopeImpl = {
-	trunk: impl.S,
-	branch: impl.S
+	if(typeof credentials.publicKey !== 'string'){
+		throw new InvalidArgumentError('credentials.publicKey')
+	}
 }
 
 function verifyScope(scope) {
@@ -80,16 +69,16 @@ function verifyScope(scope) {
 	}
 
 	if(scope.branch !== undefined) {
-		impl.implements(scope, branchScopeImpl)
-		/* istanbul ignore else */
-		if(scope.branch === '') {
-			throw new InvalidArgumentError('branch')
+		if(typeof scope.branch !== 'string' || scope.branch === ''){
+			throw new InvalidArgumentError('scope.branch')
 		}
 		/* istanbul ignore next */
 		return
 	}
 
-	impl.implements(scope, trunkScopeImpl)
+	if(typeof scope.trunk !== 'string' || scope.trunk === ''){
+		throw new InvalidArgumentError('scope.trunk')
+	}
 }
 
 function verifyOptions(options) {
@@ -98,15 +87,15 @@ function verifyOptions(options) {
 	}
 
 	if(options.url === undefined && options.fingerPrintingEnabled === undefined) {
-		throw new impl.NotImplementedError
+		throw new InvalidArgumentError('options')
 	}
 
-	if(options.url !== undefined) {
-		impl.implements(options, { url: impl.S })
+	if(options.url !== undefined && typeof options.url !== 'string') {
+		throw new InvalidArgumentError('options.url')
 	}
 
 	/* istanbul ignore else */
-	if(options.fingerPrintingEnabled !== undefined) {
-		impl.implements(options, { fingerPrintingEnabled: impl.B })
+	if(options.fingerPrintingEnabled !== undefined && typeof options.fingerPrintingEnabled !== 'boolean') {
+		throw new InvalidArgumentError('options.fingerPrintingEnabled')
 	}
 }

@@ -1,6 +1,5 @@
 var assert = require('chai').assert
 var forteApi = require('../src')
-var NotImplementedError = require('implementjs').NotImplementedError
 var assign = require('../src/util').assign
 
 describe('forteApi', function(){
@@ -27,7 +26,9 @@ describe('forteApi', function(){
 				{bearerToken: null},
 				{bearerToken: 0},
 				{privateKey: null, publicKey: null},
-				{privateKey: 0, publicKey: 0}
+				{privateKey: 0, publicKey: 0},
+				{privateKey: 'valid', publicKey: 0},
+				{privateKey: 0, publicKey: 'valid'}
 			]
 			invalidCredentials.forEach(function(invalidCreds){
 				assert.throws(apiFactory(invalidCreds, validTrunkScope))
