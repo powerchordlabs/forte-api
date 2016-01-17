@@ -1,9 +1,7 @@
 var impl = require('implementjs')
+var assign = require('./util').assign
 
 exports = module.exports = createAPI
-
-/* istanbul ignore next */
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function createAPI(credentials, scope, options) {
 	verifyArgs.apply(null, arguments)
@@ -17,9 +15,11 @@ function forteApi(credentials, scope, options) {
 				throw new InvalidArgumentError('id')
 			}
 
-			var newScope = _extends({}, scope)
-			newScope.branch = id
+			var newScope = assign({}, scope, { branch: id})
 			return createAPI(credentials, newScope, options)
+		},
+		getScope: function(){
+			return scope
 		}
 	}
 }
