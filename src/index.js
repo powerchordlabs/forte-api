@@ -14,7 +14,7 @@ function forteApi(credentials, scope, options) {
 	return {
 		withBranch: function(id) {
 			if(id === undefined){
-				throw impl.NotImplementedError
+				throw new InvalidArgumentError('id')
 			}
 
 			var newScope = _extends({}, scope)
@@ -23,6 +23,16 @@ function forteApi(credentials, scope, options) {
 		}
 	}
 }
+
+/* 
+ * Custom Errors
+ */
+function InvalidArgumentError(field) {
+  this.name = 'InvalidArgumentError';
+  this.message = 'Invalid Argument: ' + id;
+}
+InvalidArgumentError.prototype = Object.create(Error.prototype);
+InvalidArgumentError.prototype.constructor = InvalidArgumentError;
 
 /* 
  * Verifcations
@@ -66,14 +76,14 @@ var branchScopeImpl = {
 
 function verifyScope(scope) {
 	if(!scope){
-		throw new impl.NotImplementedError
+		throw new InvalidArgumentError('scope')
 	}
 
 	if(scope.branch !== undefined) {
 		impl.implements(scope, branchScopeImpl)
 		/* istanbul ignore else */
 		if(scope.branch === '') {
-			throw new Error('Invalid argument.')
+			throw new InvalidArgumentError('branch')
 		}
 		/* istanbul ignore next */
 		return

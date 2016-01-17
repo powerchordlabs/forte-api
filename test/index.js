@@ -87,7 +87,6 @@ describe('forteApi', function(){
 			})
 		})
 
-		it('should throw if ID is not a non-empty string')
 		it('should return a new instance that has branch scope')
 	})
 
