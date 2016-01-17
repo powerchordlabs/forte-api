@@ -1,6 +1,7 @@
 var assert = require('chai').assert
 var forteApi = require('../src')
 var NotImplementedError = require('implementjs').NotImplementedError
+var assign = require('../src/util').assign
 
 describe('forteApi', function(){
 	function apiFactory(){
@@ -13,10 +14,11 @@ describe('forteApi', function(){
 	var validTokenCreds = {bearerToken: 'valid'}
 	var validKeyCreds = {privateKey: 'valid', publicKey: 'valid'}
 	var validTrunkScope = { trunk: 'valid' }
+	var validTrunkAndBranchScope = { trunk: 'valid', branch: 'valid' }
 
 	var invalidBranchScopes = [null, '', 1, {}, function(){}]
 
-	describe('constructor', function(){
+	describe('ctor(credentials, scope, options)', function(){
 		it('should throw if invalid credentials have been provided', function(){
 			var invalidCredentials = [
 				undefined,
@@ -75,22 +77,32 @@ describe('forteApi', function(){
 		})
 	})
 
-	describe('api.withBranch', function(){
+	describe('.withBranch(id)', function(){
 		var api
+		var branchApi
+		
 		beforeEach(function(){
-			api = apiFactory(validTokenCreds, validTrunkScope)()
+			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+			branchApi = api.withBranch('branchid')
 		})
 
-		it('should throw if an invalid a branch scope has been provided', function(){
+		it('should throw when id is invalid', function(){
 			invalidBranchScopes.concat(undefined).forEach(function(scope){
 				assert.throws(function() { api.withBranch(scope) })
 			})
 		})
 
-		it('should return a new instance that has branch scope')
+		it('should return a new instance with the correct scope', function(){
+			assert.notStrictEqual(api, branchApi)
+			assert.deepEqual(branchApi.getScope(), assign({}, validTrunkAndBranchScope, { branch: 'branchid'}))
+		})
+
+		it('should NOT alter the original api scope', function(){
+			assert.deepEqual(api.getScope(), validTrunkAndBranchScope)
+		})
 	})
 
-	describe('api.on', function(){
+	describe('.on("auth", cb)', function(){
 		it('should throw if callback is not a function')
 		it('should invoke the callback function on auth success')
 		it('should invoke the callback function on auth error')
