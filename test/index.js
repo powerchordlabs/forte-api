@@ -103,6 +103,18 @@ describe('forteApi', function(){
 		})
 	})
 
+	describe('.getScope()', function(){
+		var api
+		
+		beforeEach(function(){
+			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+		})
+
+		it('should return the api scope', function(){
+			assert.deepEqual(api.getScope(), validTrunkAndBranchScope)
+		})
+	})
+
 	describe('.on("auth", cb)', function(){
 		it('should throw if callback is not a function')
 		it('should invoke the callback function on auth success')
