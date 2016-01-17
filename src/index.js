@@ -6,11 +6,8 @@ exports = module.exports = createAPI
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function createAPI(credentials, scope, options) {
-	verifyCredentials(credentials)
-	verifyScope(scope)
-	verifyOptions(options)
-
-	return forteApi(credentials, scope, options)
+	verifyArgs.apply(null, arguments)
+	return forteApi.apply(null, arguments)
 }
 
 function forteApi(credentials, scope, options) {
@@ -30,6 +27,12 @@ function forteApi(credentials, scope, options) {
 /* 
  * Verifcations
  */
+function verifyArgs(credentials, scope, options) {
+	verifyCredentials(credentials)
+	verifyScope(scope)
+	verifyOptions(options)
+}
+
 var credentialBearerImpl = {
 	bearerToken: impl.S
 }
@@ -68,6 +71,7 @@ function verifyScope(scope) {
 
 	if(scope.branch !== undefined) {
 		impl.implements(scope, branchScopeImpl)
+		/* istanbul ignore else */
 		if(scope.branch === '') {
 			throw new Error('Invalid argument.')
 		}
