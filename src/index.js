@@ -42,24 +42,28 @@ function verifyArgs(credentials, scope, options) {
 	verifyOptions(options)
 }
 
+function argumentError(name) {
+	throw new InvalidArgumentError(name)
+}
+
 function verifyCredentials(credentials) {
 	if(typeof credentials === 'undefined'){
-		throw new InvalidArgumentError('credentials')
+		argumentError('credentials')
 	}
 
 	if(credentials.bearerToken !== undefined) {
 		if(typeof credentials.bearerToken !== 'string'){
-			throw new InvalidArgumentError('credentials.bearerToken')
+			argumentError('credentials.bearerToken')
 		}
 		return
 	}
 
 	if(typeof credentials.privateKey !== 'string'){
-		throw new InvalidArgumentError('credentials.privateKey')
+		argumentError('credentials.privateKey')
 	}
 
 	if(typeof credentials.publicKey !== 'string'){
-		throw new InvalidArgumentError('credentials.publicKey')
+		argumentError('credentials.publicKey')
 	}
 }
 
@@ -67,17 +71,13 @@ function verifyScope(scope) {
 	if(!scope){
 		throw new InvalidArgumentError('scope')
 	}
-
-	if(scope.branch !== undefined) {
-		if(typeof scope.branch !== 'string' || scope.branch === ''){
-			throw new InvalidArgumentError('scope.branch')
-		}
-		/* istanbul ignore next */
-		return
+	
+	if(typeof scope.trunk !== 'string' || scope.trunk === ''){
+		argumentError('scope.trunk')
 	}
 
-	if(typeof scope.trunk !== 'string' || scope.trunk === ''){
-		throw new InvalidArgumentError('scope.trunk')
+	if(scope.branch !== undefined && typeof scope.branch !== 'string' || scope.branch === ''){
+		argumentError('scope.branch')
 	}
 }
 
@@ -87,15 +87,14 @@ function verifyOptions(options) {
 	}
 
 	if(options.url === undefined && options.fingerPrintingEnabled === undefined) {
-		throw new InvalidArgumentError('options')
+		argumentError('options')
 	}
 
 	if(options.url !== undefined && typeof options.url !== 'string') {
-		throw new InvalidArgumentError('options.url')
+		argumentError('options.url')
 	}
 
-	/* istanbul ignore else */
 	if(options.fingerPrintingEnabled !== undefined && typeof options.fingerPrintingEnabled !== 'boolean') {
-		throw new InvalidArgumentError('options.fingerPrintingEnabled')
+		argumentError('options.fingerPrintingEnabled')
 	}
 }
