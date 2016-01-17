@@ -1,8 +1,8 @@
 # ForteAPI
 
-### Fluently communicate with the Powerchord Forte REST API!
+### Easily communicate with the Powerchord Forte REST API!
 
-ForteAPI is a fluent api wrapper around the Powerchord Forte REST API that allows you to focus on the data you want, rather than urls and verbs used to get or update the data you want.
+ForteAPI is a wrapper around the Powerchord Forte REST API that allows you to focus on the data you want, rather than urls and verbs used to get or update the data you want.
 
 ## Install
 
@@ -10,8 +10,8 @@ ForteAPI is a fluent api wrapper around the Powerchord Forte REST API that allow
 
 ## Features
 
-* **Fluent API**  
-The fluent API simplifies REST API access so you can focus on data and not HTTP
+* **Simple API**  
+Simplifies REST API access so you can focus on data and not HTTP
 * **Semi-Automatic token auth**  
 You simply provide secret keys, or a pre-existing token and ForteApi does the rest
 * **Client Fingerprinting**  
@@ -183,6 +183,16 @@ var scope = { trunk: 'TRUNKID', branch: 'BRANCHID' }
 var api = ForteApi(creds, scope)
 ```
 
+#### api.getScope(): {object}
+
+Returns the scope of the api.
+
+###### result:
+* `trunk: {string}`  
+The trunk ID of the scope.
+* `branch: {string|null}`  
+The branch ID of the scope. Since only `trunk` is required, it is possible for the branch to be null if the api has not been given a branch scope.
+
 ### Events
 
 #### api.on('auth', callback(err, token))
@@ -205,7 +215,7 @@ api.on('auth', (err, token) => {
 
 ### Endpoints
 
-Endpoints are the main progamming point for api data access. They are the fluent abstractions of the REST API endpoints. All of the endpoints return promises to allow chaining.
+Endpoints are the main progamming point for api data access. They are the abstractions of the REST API endpoints. All of the endpoints return promises to allow chaining.
 
 ```js
 api.organizations.getOne('orgid').then(
