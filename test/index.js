@@ -14,7 +14,7 @@ describe('forteApi', function(){
 	var validKeyCreds = {privateKey: 'valid', publicKey: 'valid'}
 	var validTrunkScope = { trunk: 'valid' }
 
-	var invalidBranchScopes = [null, 1, {}, function(){}]
+	var invalidBranchScopes = [null, '', 1, {}, function(){}]
 
 	describe('constructor', function(){
 		it('should throw if invalid credentials have been provided', function(){

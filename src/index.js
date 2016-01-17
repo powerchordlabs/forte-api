@@ -68,6 +68,9 @@ function verifyScope(scope) {
 
 	if(scope.branch !== undefined) {
 		impl.implements(scope, branchScopeImpl)
+		if(scope.branch === '') {
+			throw new Error('Invalid argument.')
+		}
 		/* istanbul ignore next */
 		return
 	}
