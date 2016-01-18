@@ -1,4 +1,4 @@
-import client from './client'
+import ApiClient from './client'
 import { InvalidArgumentError } from './util'
 
 exports = module.exports = createApi
@@ -9,6 +9,8 @@ function createApi(credentials, scope, options) {
 }
 
 function forteApi(credentials, scope, options) {
+	let client = new ApiClient();
+
 	return {
 		withBranch(id) {
 			validateArgs('withBranch', arguments)
@@ -18,15 +20,13 @@ function forteApi(credentials, scope, options) {
 		},
 		getScope(){
 			return scope
-		},
+		}, 
 		on(name, callback) {
 			validateArgs('on', arguments)
-			client.get('http://www.google.com').then(response => {
-				callback(null, response)
-			})
 		},
 		log(level, message, meta) {
-			validateArgs('log', arguments)
+			validateArgs('log', arguments) 
+			return client.post('/log', { data: { level, message, meta } })
 		}
 
 	}

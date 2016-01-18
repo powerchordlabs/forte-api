@@ -2,6 +2,8 @@ import { assert } from 'chai'
 import forteApi from '../src'
 import { InvalidArgumentError } from '../src/util'
 
+import * as mockapi from './mocks/pc6api'
+
 describe('forteApi', () => {
 	function apiFactory(){
 		let args = arguments
@@ -172,7 +174,15 @@ describe('forteApi', () => {
 			})
 		})
 
-		it('should post to the api.log uri')
+		it('should post to the api.log uri', () => {
+			return api.log('trace', 'valid').then(response => {
+				let { path, body: { level, message }, headers } = response.data
+
+				assert.equal('/log', path)
+				assert.equal('trace', level)
+				assert.equal('valid', message)
+			})
+		})
 	})
 
 	describe('api.organizations', () => {
