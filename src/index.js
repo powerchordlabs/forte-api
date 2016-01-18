@@ -1,49 +1,48 @@
-var assign = require('./util').assign
+var util = require('./util')
+var assign = util.assign
+var InvalidArgumentError = util.InvalidArgumentError
 
-exports = module.exports = createAPI
+exports = module.exports = createApi
 
-function createAPI(credentials, scope, options) {
-	verifyArgs.apply(null, arguments)
+function createApi(credentials, scope, options) {
+	verifyCreateApiArgs.apply(null, arguments)
 	return forteApi.apply(null, arguments)
 }
 
 function forteApi(credentials, scope, options) {
 	return {
 		withBranch: function(id) {
-			if(id === undefined){
-				throw new InvalidArgumentError('id')
-			}
+			verifyWithBranchArgs.apply(null, arguments)
 
 			var newScope = assign({}, scope, { branch: id})
-			return createAPI(credentials, newScope, options)
+			return createApi(credentials, newScope, options)
 		},
 		getScope: function(){
 			return scope
+		},
+		on: function(name, callback) {
+			verifyOnArgs.apply(null, arguments)
+		},
+		log: function(level, message, meta) {
+			verifyLogArgs.apply(null, arguments)
 		}
+
 	}
 }
 
-/* 
- * Custom Errors
- */
-function InvalidArgumentError(field) {
-  this.name = 'InvalidArgumentError';
-  this.message = 'Invalid Argument: ' + id;
-}
-InvalidArgumentError.prototype = Object.create(Error.prototype);
-InvalidArgumentError.prototype.constructor = InvalidArgumentError;
+var LOG_LEVELS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
 /* 
  * Verifcations
  */
-function verifyArgs(credentials, scope, options) {
+function argumentError(name) {
+	throw new InvalidArgumentError(name)
+}
+
+function verifyCreateApiArgs(credentials, scope, options) {
 	verifyCredentials(credentials)
 	verifyScope(scope)
 	verifyOptions(options)
-}
-
-function argumentError(name) {
-	throw new InvalidArgumentError(name)
 }
 
 function verifyCredentials(credentials) {
@@ -96,5 +95,35 @@ function verifyOptions(options) {
 
 	if(options.fingerPrintingEnabled !== undefined && typeof options.fingerPrintingEnabled !== 'boolean') {
 		argumentError('options.fingerPrintingEnabled')
+	}
+}
+
+function verifyWithBranchArgs(id) {
+	if(id === undefined){
+		throw new InvalidArgumentError('id')
+	}
+}
+
+function verifyLogArgs(level, message, meta) {
+	if(LOG_LEVELS.indexOf(level) === -1) {
+		argumentError('Log level "' + level + '" is invalid. Use one of: ' + LOG_LEVELS.join(', '))
+	}
+
+	if(typeof message !== 'string' || message.trim() === '') {
+		argumentError('Message "' + message + '" is invalid.')
+	}
+
+	if(meta !== undefined && (meta === null || typeof meta !== 'object')){
+		argumentError('Meta "' + meta + '" is invalid.')
+	}
+}
+
+function verifyOnArgs(name, callback) {
+	if(name !== 'auth') {
+		argumentError('"' + name + '" is not a supported event.')
+	}
+
+	if(typeof callback !== 'function') {
+		argumentError('callback must be a function.')
 	}
 }

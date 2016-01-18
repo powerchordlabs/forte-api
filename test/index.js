@@ -1,6 +1,9 @@
 var assert = require('chai').assert
 var forteApi = require('../src')
-var assign = require('../src/util').assign
+var util = require('../src/util')
+
+var assign = util.assign
+var InvalidArgumentError = util.InvalidArgumentError
 
 describe('forteApi', function(){
 	function apiFactory(){
@@ -115,16 +118,62 @@ describe('forteApi', function(){
 		})
 	})
 
-	describe('.on("auth", cb)', function(){
-		it('should throw if callback is not a function')
+	describe('.on("auth", callback)', function(){
+		var api
+		
+		beforeEach(function(){
+			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+		})
+
+		it('should throw if event is not supported', function(){
+			assert.throws(function() { api.on('invalid', function(){}) }, InvalidArgumentError)
+		})
+
+		it('should throw if callback is not a function', function(){
+			assert.throws(function() { api.on('auth', null) }, InvalidArgumentError)
+		})
+
 		it('should invoke the callback function on auth success')
 		it('should invoke the callback function on auth error')
 	})
 
-	describe('api.log', function(){
-		it('should throw if log level is invalid')
-		it('should throw if message is invalid')
-		it('should throw if meta is supplied, but is not an object')
+	describe('api.log(level, message, [meta])', function(){
+		var api
+		
+		beforeEach(function(){
+			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+		})
+
+		it('should throw if log level is invalid', function(){
+			assert.throws(function(){ api.log('invalid', 'valid')}, InvalidArgumentError)
+		})
+
+		it('should throw if message is invalid', function(){
+			var invalidMessages = [
+			 	undefined, 
+			 	null,
+			 	'',
+			 	{},
+			 	function(){}
+			 ]
+
+			 invalidMessages.forEach(function(message){
+				assert.throws(function(){ api.log('trace', message)}, InvalidArgumentError)
+			 })
+		})
+
+		it('should throw if meta is invalid', function(){
+			var invalidMeta = [
+				null,
+				'',
+				function(){}
+			]
+			invalidMeta.forEach(function(meta){
+				assert.throws(function(){ api.log('trace', 'valid', meta)})
+			})
+		})
+		
+		it('should post to the api.log uri')
 	})
 
 	describe('api.organizations', function(){
