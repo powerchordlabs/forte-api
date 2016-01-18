@@ -1,28 +1,25 @@
-var assert = require('chai').assert
-var forteApi = require('../src')
-var util = require('../src/util')
+import { assert } from 'chai'
+import forteApi from '../src'
+import { InvalidArgumentError } from '../src/util'
 
-var assign = util.assign
-var InvalidArgumentError = util.InvalidArgumentError
-
-describe('forteApi', function(){
+describe('forteApi', () => {
 	function apiFactory(){
-		var args = arguments
-		return function() { 
+		let args = arguments
+		return () => { 
 			return forteApi.apply(null, args)
 		}
 	}
 
-	var validTokenCreds = {bearerToken: 'valid'}
-	var validKeyCreds = {privateKey: 'valid', publicKey: 'valid'}
-	var validTrunkScope = { trunk: 'valid' }
-	var validTrunkAndBranchScope = { trunk: 'valid', branch: 'valid' }
+	let validTokenCreds = {bearerToken: 'valid'}
+	let validKeyCreds = {privateKey: 'valid', publicKey: 'valid'}
+	let validTrunkScope = { trunk: 'valid' }
+	let validTrunkAndBranchScope = { trunk: 'valid', branch: 'valid' }
 
-	var invalidBranchScopes = [null, '', 1, {}, function(){}]
+	let invalidBranchScopes = [null, '', 1, {}, () => {}]
 
-	describe('ctor(credentials, scope, options)', function(){
-		it('should throw if invalid credentials have been provided', function(){
-			var invalidCredentials = [
+	describe('ctor(credentials, scope, options)', () => {
+		it('should throw if invalid credentials have been provided', () => {
+			let invalidCredentials = [
 				undefined,
 				null,
 				{},
@@ -33,162 +30,164 @@ describe('forteApi', function(){
 				{privateKey: 'valid', publicKey: 0},
 				{privateKey: 0, publicKey: 'valid'}
 			]
-			invalidCredentials.forEach(function(invalidCreds){
+			invalidCredentials.forEach(invalidCreds => {
 				assert.throws(apiFactory(invalidCreds, validTrunkScope))
 			})
 		})
 
-		it('should NOT throw if valid credentials have been provided', function(){
+		it('should NOT throw if valid credentials have been provided', () => {
 			assert.doesNotThrow(apiFactory(validTokenCreds, validTrunkScope))
 			assert.doesNotThrow(apiFactory(validKeyCreds, validTrunkScope))
 		})
 
-		it('should throw if an invalid a trunk scope has been provided', function(){
+		it('should throw if an invalid a trunk scope has been provided', () => {
 			assert.throws(apiFactory(validTokenCreds, undefined))
 			assert.throws(apiFactory(validTokenCreds, null))
 			assert.throws(apiFactory(validTokenCreds, {}))
 		})
 
-		it('should throw if an invalid a branch scope has been provided', function(){
-			invalidBranchScopes.forEach(function(scope){
+		it('should throw if an invalid a branch scope has been provided', () => {
+			invalidBranchScopes.forEach(scope => {
 				assert.throws(apiFactory(validTokenCreds, {trunk:'valid', branch: scope}))
 			})
 		})
 
-		it('should throw if options are invalid', function(){
-			var invalidOptions = [
+		it('should throw if options are invalid', () => {
+			let invalidOptions = [
 				{},
 				{ url: 0 },
 				{ fingerPrintingEnabled: 'invalid' },
 				{ url: 'valid', fingerPrintingEnabled: 'invalid' },
 				{ url: 0, fingerPrintingEnabled: true }
 			]
-			invalidOptions.forEach(function(options) {
+			invalidOptions.forEach(options => {
 				assert.throws(apiFactory(validTokenCreds, validTrunkScope, options))	
 			})
 		})
 
-		it('should NOT throw if options are valid', function(){
-			var validOptions = [
+		it('should NOT throw if options are valid', () => {
+			let validOptions = [
 				undefined,
 				{ url: 'valid' },
 				{ fingerPrintingEnabled: true },
 				{ url: 'valid', fingerPrintingEnabled: true },
 			]
-			validOptions.forEach(function(options) {
+			validOptions.forEach(options => {
 				assert.doesNotThrow(apiFactory(validTokenCreds, validTrunkScope, options))	
 			})
 		})
 	})
 
-	describe('.withBranch(id)', function(){
-		var api
-		var branchApi
+	describe('.withBranch(id)', () => {
+		let api
+		let branchApi
 		
-		beforeEach(function(){
+		beforeEach(() => {
 			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 			branchApi = api.withBranch('branchid')
 		})
 
-		it('should throw when id is invalid', function(){
-			invalidBranchScopes.concat(undefined).forEach(function(scope){
-				assert.throws(function() { api.withBranch(scope) })
+		it('should throw when id is invalid', () => {
+			invalidBranchScopes
+				.concat(undefined)
+				.forEach(scope => {
+					assert.throws(() => { api.withBranch(scope) })
 			})
 		})
 
-		it('should return a new instance with the correct scope', function(){
+		it('should return a new instance with the correct scope', () => {
 			assert.notStrictEqual(api, branchApi)
-			assert.deepEqual(branchApi.getScope(), assign({}, validTrunkAndBranchScope, { branch: 'branchid'}))
+			assert.deepEqual(branchApi.getScope(), {...validTrunkAndBranchScope, ...{ branch: 'branchid'}})
 		})
 
-		it('should NOT alter the original api scope', function(){
+		it('should NOT alter the original api scope', () => {
 			assert.deepEqual(api.getScope(), validTrunkAndBranchScope)
 		})
 	})
 
-	describe('.getScope()', function(){
-		var api
+	describe('.getScope()', () => {
+		let api
 		
-		beforeEach(function(){
+		beforeEach(() => {
 			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 		})
 
-		it('should return the api scope', function(){
+		it('should return the api scope', () => {
 			assert.deepEqual(api.getScope(), validTrunkAndBranchScope)
 		})
 	})
 
-	describe('.on("auth", callback)', function(){
-		var api
+	describe('.on("auth", callback)', () => {
+		let api
 		
-		beforeEach(function(){
+		beforeEach(() => {
 			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 		})
 
-		it('should throw if event is not supported', function(){
-			assert.throws(function() { api.on('invalid', function(){}) }, InvalidArgumentError)
+		it('should throw if event is not supported', () => {
+			assert.throws(() => { api.on('invalid', () => {}) }, InvalidArgumentError)
 		})
 
-		it('should throw if callback is not a function', function(){
-			assert.throws(function() { api.on('auth', null) }, InvalidArgumentError)
+		it('should throw if callback is not a function', () => {
+			assert.throws(() => { api.on('auth', null) }, InvalidArgumentError)
 		})
 
 		it('should invoke the callback function on auth success')
 		it('should invoke the callback function on auth error')
 	})
 
-	describe('api.log(level, message, [meta])', function(){
-		var api
+	describe('api.log(level, message, [meta])', () => {
+		let api
 		
-		beforeEach(function(){
+		beforeEach(() => {
 			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 		})
 
-		it('should throw if log level is invalid', function(){
-			assert.throws(function(){ api.log('invalid', 'valid')}, InvalidArgumentError)
+		it('should throw if log level is invalid', () => {
+			assert.throws(() => { api.log('invalid', 'valid') }, InvalidArgumentError)
 		})
 
-		it('should throw if message is invalid', function(){
-			var invalidMessages = [
+		it('should throw if message is invalid', () => {
+			let invalidMessages = [
 			 	undefined, 
 			 	null,
 			 	'',
 			 	{},
-			 	function(){}
+			 	() => {}
 			 ]
 
-			 invalidMessages.forEach(function(message){
-				assert.throws(function(){ api.log('trace', message)}, InvalidArgumentError)
+			 invalidMessages.forEach(message => {
+				assert.throws(() => { api.log('trace', message) }, InvalidArgumentError)
 			 })
 		})
 
-		it('should throw if meta is invalid', function(){
-			var invalidMeta = [
+		it('should throw if meta is invalid', () => {
+			let invalidMeta = [
 				null,
 				'',
-				function(){}
+				() => {}
 			]
-			invalidMeta.forEach(function(meta){
-				assert.throws(function(){ api.log('trace', 'valid', meta)})
+			invalidMeta.forEach(meta => {
+				assert.throws(() => { api.log('trace', 'valid', meta) })
 			})
 		})
-		
+
 		it('should post to the api.log uri')
 	})
 
-	describe('api.organizations', function(){
-		describe('.getMany', function(){
+	describe('api.organizations', () => {
+		describe('.getMany', () => {
 			it('should throw if filter is null')
-			describe('when a request succeeds, the return value', function(){
+			describe('when a request succeeds, the return value', () => {
 				it('should have a "response" property')
 				it('should have a "response.data" property')
 			})
-			describe('when a request fails, the return value', function(){
+			describe('when a request fails, the return value', () => {
 				it('should have a "response" property')
 				it('should have a "result" property')
 			})
 		})
-		describe('.getOne', function(){
+		describe('.getOne', () => {
 			it('should throw if filter is null')
 
 		})

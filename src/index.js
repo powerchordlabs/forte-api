@@ -1,6 +1,5 @@
-var util = require('./util')
-var assign = util.assign
-var InvalidArgumentError = util.InvalidArgumentError
+import client from './client'
+import { InvalidArgumentError } from './util'
 
 exports = module.exports = createApi
 
@@ -11,19 +10,22 @@ function createApi(credentials, scope, options) {
 
 function forteApi(credentials, scope, options) {
 	return {
-		withBranch: function(id) {
+		withBranch(id) {
 			validateArgs('withBranch', arguments)
 
-			var newScope = assign({}, scope, { branch: id})
+			let newScope = {...scope, ...{ branch: id}}
 			return createApi(credentials, newScope, options)
 		},
-		getScope: function(){
+		getScope(){
 			return scope
 		},
-		on: function(name, callback) {
+		on(name, callback) {
 			validateArgs('on', arguments)
+			client.get('http://www.google.com').then(response => {
+				callback(null, response)
+			})
 		},
-		log: function(level, message, meta) {
+		log(level, message, meta) {
 			validateArgs('log', arguments)
 		}
 
@@ -33,18 +35,18 @@ function forteApi(credentials, scope, options) {
 /* 
  * method validations
  */
-var LOG_LEVELS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
+const LOG_LEVELS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
 function argumentError(name) {
 	throw new InvalidArgumentError(name)
 }
 
-function validateArgs(method, arguments) {
-	validators[method].apply(null, arguments)
+function validateArgs(method, args) {
+	validators[method].apply(null, args)
 }
 
-var validators = {
-	createApi: function createApi(credentials, scope, options) {
+const validators = {
+	createApi: (credentials, scope, options) => {
 		function verifyCredentials(credentials) {
 			if(typeof credentials === 'undefined'){
 				argumentError('credentials')
@@ -102,12 +104,12 @@ var validators = {
 		verifyScope(scope)
 		verifyOptions(options)
 	},
-	withBranch: function withBranch(id) {
+	withBranch: (id) => {
 		if(id === undefined){
 			throw new InvalidArgumentError('id')
 		}
 	},
-	log: function log(level, message, meta){
+	log: (level, message, meta) => {
 		if(LOG_LEVELS.indexOf(level) === -1) {
 			argumentError('Log level "' + level + '" is invalid. Use one of: ' + LOG_LEVELS.join(', '))
 		}
@@ -120,7 +122,7 @@ var validators = {
 			argumentError('Meta "' + meta + '" is invalid.')
 		}
 	},
-	on: function on(name, callback) {
+	on: (name, callback) => {
 		if(name !== 'auth') {
 			argumentError('"' + name + '" is not a supported event.')
 		}
