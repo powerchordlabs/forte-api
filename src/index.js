@@ -3,13 +3,26 @@ import { InvalidArgumentError } from './util'
 
 exports = module.exports = createApi
 
+const DEFAULTS = {
+	url: 'https://api.powerchord.io',
+	fingerPrintingEnabled: true
+}
+
 function createApi(credentials, scope, options) {
 	validateArgs('createApi', arguments)
-	return forteApi.apply(null, arguments)
+	let opts = {...DEFAULTS, ...options}
+	return forteApi(credentials, scope, opts)
 }
 
 function forteApi(credentials, scope, options) {
-	let client = new ApiClient();
+	let authToken;
+	let client = new ApiClient(scope.hostname, credentials, options.url, (err, response) => {
+		eventRegistry.auth.forEach((cb => cb(err, response)))
+	});
+
+	let eventRegistry = {
+		auth: []
+	}
 
 	return {
 		withBranch(id) {
@@ -23,6 +36,7 @@ function forteApi(credentials, scope, options) {
 		}, 
 		on(name, callback) {
 			validateArgs('on', arguments)
+			eventRegistry[name].push(callback)
 		},
 		log(level, message, meta) {
 			validateArgs('log', arguments) 
@@ -73,6 +87,10 @@ const validators = {
 				throw new InvalidArgumentError('scope')
 			}
 			
+			if(typeof scope.hostname !== 'string' || scope.hostname === ''){
+				argumentError('scope.hostname')
+			}
+
 			if(typeof scope.trunk !== 'string' || scope.trunk === ''){
 				argumentError('scope.trunk')
 			}

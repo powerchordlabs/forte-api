@@ -1,8 +1,29 @@
+import crypto from 'crypto'
 import superagent from 'superagent';
 
 const METHODS = ['get', 'post', 'put', 'patch', 'del'];
 
-const API_HOST = 'https://api.pclocal.us' //window.POWERCHORD.APIURL;'
+function authMiddleware(superagent, hostname, credentials){
+  superagent.Request.prototype.sign = function(){
+    var authHeader = ''
+
+    if (credentials.bearerToken) {
+      authHeader = `${credentials.bearerToken}`
+    } else {
+      let UTCTimestamp = new Date().getTime()
+      let FQDN = hostname
+      let checksum = crypto.createHash('sha512').update([credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join('')).digest('hex')
+
+      authHeader = `Checksum ${credentials.publicKey}:${UTCTimestamp}:${checksum}:${FQDN}`
+    }
+
+    this.set('Authorization', authHeader);
+
+    return this
+  }
+
+  return superagent
+}
 
 class Client {
 
@@ -16,15 +37,17 @@ class Client {
     }
   }
 
-  formatUrl(path) {
+  formatUrl(baseUrl, path) {
     const adjustedPath = path[0] !== '/' ? '/' + path : path;
-    return API_HOST + adjustedPath;
+    return baseUrl + adjustedPath;
   }
 
-  constructor(req) {
+  constructor(hostname, credentials, baseUrl, onAuth) {
+    var agent = authMiddleware(superagent, hostname, credentials)
+
     METHODS.forEach((method) =>
       this[method] = (path, { params, data, headers } = {}) => new Promise((resolve, reject) => {
-        const request = superagent[method](this.formatUrl(path));
+        const request = agent[method](this.formatUrl(baseUrl, path)).sign();
 
         if (params) {
           request.query(params);
@@ -40,6 +63,9 @@ class Client {
 
         request.end((err, res) => {
           let parsed = this.formatResponse(res)
+
+          onAuth && onAuth(err, parsed)
+
           err ? reject(parsed) : resolve(parsed)
         });
       }));

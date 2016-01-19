@@ -8,7 +8,18 @@ function formatNockResponse(uri, body) {
 	};
 }
 
-export const log = 
-	nock('https://api.pclocal.us')
-    .post('/log')
-    .reply(200, formatNockResponse);
+export default {
+	get: (url, status = 200) => {
+		return nock('https://api.pclocal.us')
+			.defaultReplyHeaders({
+			    'Authorization': 'FAKE_AUTH_TOKEN_FROM_NOCK',
+			  })
+	    	.get(url)
+	    	.reply(status, formatNockResponse);
+	},
+	post: (url, status = 200) => {
+		return nock('https://api.pclocal.us')
+	    	.post(url)
+	    	.reply(status, formatNockResponse);
+	}
+}

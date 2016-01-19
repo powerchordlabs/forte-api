@@ -2,20 +2,29 @@ import { assert } from 'chai'
 import forteApi from '../src'
 import { InvalidArgumentError } from '../src/util'
 
-import * as mockapi from './mocks/pc6api'
+import mockapi from './mocks/pc6api'
+
+const DEFAULT_OPTIONS = {
+	url: 'https://api.pclocal.us',
+	fingerPrintingEnabled: true
+}
 
 describe('forteApi', () => {
-	function apiFactory(){
-		let args = arguments
+	function apiFactory(credentials, scope, options){
+		let opts = {...DEFAULT_OPTIONS, ...options}
 		return () => { 
-			return forteApi.apply(null, args)
+			return forteApi(credentials, scope, opts)
 		}
 	}
 
-	let validTokenCreds = {bearerToken: 'valid'}
+	let validTokenCreds = {bearerToken: 'Bearer valid'}
 	let validKeyCreds = {privateKey: 'valid', publicKey: 'valid'}
-	let validTrunkScope = { trunk: 'valid' }
-	let validTrunkAndBranchScope = { trunk: 'valid', branch: 'valid' }
+	let validTrunkScope = { hostname: 'dealer.client.us', trunk: 'valid' }
+	let validTrunkAndBranchScope = { hostname: 'dealer.client.us', trunk: 'valid', branch: 'valid' }
+	let validOptions = {
+		url: 'https://api.pclocal.us',
+		fingerPrintingEnabled: true
+	}
 
 	let invalidBranchScopes = [null, '', 1, {}, () => {}]
 
@@ -56,7 +65,6 @@ describe('forteApi', () => {
 
 		it('should throw if options are invalid', () => {
 			let invalidOptions = [
-				{},
 				{ url: 0 },
 				{ fingerPrintingEnabled: 'invalid' },
 				{ url: 'valid', fingerPrintingEnabled: 'invalid' },
@@ -123,7 +131,8 @@ describe('forteApi', () => {
 		let api
 		
 		beforeEach(() => {
-			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+			api = apiFactory(validKeyCreds, validTrunkAndBranchScope)()
+			mockapi.post('/log')
 		})
 
 		it('should throw if event is not supported', () => {
@@ -134,8 +143,41 @@ describe('forteApi', () => {
 			assert.throws(() => { api.on('auth', null) }, InvalidArgumentError)
 		})
 
-		it('should invoke the callback function on auth success')
+		it('should invoke the callback function on auth success', (done) => {
+			api.on('auth', (err, res) => {
+				console.log('on.auth:', res)
+				done()
+			})
+			api.log('trace', 'test')
+		})
+
 		it('should invoke the callback function on auth error')
+	})
+
+	describe('all api endpoint requests', () => {
+		beforeEach(() => {
+			mockapi.post('/log')
+		})
+
+		it('should have authorization header', () => {
+			let api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+
+			return api.log('trace', 'valid').then(response => {
+				let { headers } = response.data
+
+				assert.equal(headers.authorization, 'Bearer valid')
+			})
+		})
+
+		it('should have authorization header', () => {
+			let api = apiFactory(validKeyCreds, validTrunkAndBranchScope)()
+
+			return api.log('trace', 'valid').then(response => {
+				let { headers } = response.data
+
+				assert.match(headers.authorization, /^Checksum valid:(\d+):([^:]+):(dealer\.client\.us)$/)
+			})
+		})
 	})
 
 	describe('api.log(level, message, [meta])', () => {
@@ -175,9 +217,11 @@ describe('forteApi', () => {
 		})
 
 		it('should post to the api.log uri', () => {
+			let mock = mockapi.post('/log')
 			return api.log('trace', 'valid').then(response => {
 				let { path, body: { level, message }, headers } = response.data
 
+				assert.equal('Bearer valid', headers.authorization)
 				assert.equal('/log', path)
 				assert.equal('trace', level)
 				assert.equal('valid', message)
