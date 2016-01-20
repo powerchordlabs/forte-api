@@ -1,3 +1,7 @@
+export const ApiPaths = {
+	log: '/developer/log'
+}
+
 exports.InvalidArgumentError = module.exports.InvalidArgumentError = InvalidArgumentError;
 
 /* 

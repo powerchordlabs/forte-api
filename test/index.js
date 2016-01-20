@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import forteApi from '../src'
-import { InvalidArgumentError } from '../src/util'
+import { InvalidArgumentError, ApiPaths } from '../src/util'
 
 import nock from 'nock'
 import mockapi, { MOCK_AUTH_TOKEN } from './mocks/pc6api'
@@ -150,7 +150,7 @@ describe('forteApi', () => {
 		})
 
 		it('should invoke the callback function on auth success', (done) => {
-			mockapi.post('/log')
+			mockapi.post(ApiPaths.log)
 			api.on('auth', (err, res) => {
 				assert.isNull(err)
 				done()
@@ -170,7 +170,7 @@ describe('forteApi', () => {
 
 	describe('api endpoint requests', () => {
 		beforeEach(() => {
-			mockapi.post('/log')
+			mockapi.post(ApiPaths.log)
 		})
 
 		it('should have response.headers.authorization when using Bearer creds', () => {
@@ -198,7 +198,7 @@ describe('forteApi', () => {
 		
 		beforeEach(() => {
 			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
-			mockapi.post('/log')
+			mockapi.post(ApiPaths.log)
 		})
 
 		it('should throw if log level is not supported', () => {

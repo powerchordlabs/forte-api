@@ -1,5 +1,5 @@
 import ApiClient from './client'
-import { InvalidArgumentError } from './util'
+import { InvalidArgumentError, ApiPaths } from './util'
 
 exports = module.exports = createApi
 
@@ -40,7 +40,7 @@ function forteApi(credentials, scope, options) {
 		},
 		log(level, message, meta) {
 			validateArgs('log', arguments) 
-			return client.post('/log', { data: { level, message, meta } })
+			return client.post(ApiPaths.log, { data: { level, message, meta } })
 		}
 
 	}
