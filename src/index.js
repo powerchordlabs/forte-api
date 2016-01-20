@@ -101,13 +101,7 @@ const validators = {
 		}
 
 		function verifyOptions(options) {
-			if(options === undefined) {
-				return
-			}
-
-			if(options.url === undefined && options.fingerPrintingEnabled === undefined) {
-				argumentError('options')
-			}
+			// note: undefined is supported as options are merged with defaults in createApi
 
 			if(options.url !== undefined && typeof options.url !== 'string') {
 				argumentError('options.url')

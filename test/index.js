@@ -2,7 +2,8 @@ import { assert } from 'chai'
 import forteApi from '../src'
 import { InvalidArgumentError } from '../src/util'
 
-import mockapi from './mocks/pc6api'
+import nock from 'nock'
+import mockapi, { MOCK_AUTH_TOKEN } from './mocks/pc6api'
 
 const DEFAULT_OPTIONS = {
 	url: 'https://api.pclocal.us',
@@ -55,6 +56,8 @@ describe('forteApi', () => {
 			assert.throws(apiFactory(validTokenCreds, undefined))
 			assert.throws(apiFactory(validTokenCreds, null))
 			assert.throws(apiFactory(validTokenCreds, {}))
+			assert.throws(apiFactory(validTokenCreds, { hostname: 'dealer.client.us', trunk: null }))
+			assert.throws(apiFactory(validTokenCreds, { hostname: 'dealer.client.us', trunk: '' }))
 		})
 
 		it('should throw if an invalid a branch scope has been provided', () => {
@@ -135,6 +138,10 @@ describe('forteApi', () => {
 			mockapi.post('/log')
 		})
 
+		afterEach(() => {
+			nock.cleanAll()
+		})
+
 		it('should throw if event is not supported', () => {
 			assert.throws(() => { api.on('invalid', () => {}) }, InvalidArgumentError)
 		})
@@ -145,7 +152,6 @@ describe('forteApi', () => {
 
 		it('should invoke the callback function on auth success', (done) => {
 			api.on('auth', (err, res) => {
-				console.log('on.auth:', res)
 				done()
 			})
 			api.log('trace', 'test')
@@ -154,28 +160,31 @@ describe('forteApi', () => {
 		it('should invoke the callback function on auth error')
 	})
 
-	describe('all api endpoint requests', () => {
+	describe('api endpoint requests', () => {
 		beforeEach(() => {
 			mockapi.post('/log')
 		})
 
-		it('should have authorization header', () => {
+		afterEach(() => {
+			nock.cleanAll()
+		})
+
+		it('should have response.headers.authorization when using Bearer creds', () => {
 			let api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 
 			return api.log('trace', 'valid').then(response => {
-				let { headers } = response.data
-
-				assert.equal(headers.authorization, 'Bearer valid')
+				let { headers } = response
+				assert.equal(headers.authorization, MOCK_AUTH_TOKEN)
 			})
 		})
 
-		it('should have authorization header', () => {
+		it('should have response.headers.authorization when using Checksum creds', () => {
 			let api = apiFactory(validKeyCreds, validTrunkAndBranchScope)()
 
 			return api.log('trace', 'valid').then(response => {
-				let { headers } = response.data
+				let { headers } = response
 
-				assert.match(headers.authorization, /^Checksum valid:(\d+):([^:]+):(dealer\.client\.us)$/)
+				assert.equal(headers.authorization, MOCK_AUTH_TOKEN)
 			})
 		})
 	})
@@ -185,9 +194,14 @@ describe('forteApi', () => {
 		
 		beforeEach(() => {
 			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+			mockapi.post('/log')
 		})
 
-		it('should throw if log level is invalid', () => {
+		afterEach(() =>{
+			nock.cleanAll()
+		})
+
+		it('should throw if log level is not supported', () => {
 			assert.throws(() => { api.log('invalid', 'valid') }, InvalidArgumentError)
 		})
 
@@ -216,15 +230,25 @@ describe('forteApi', () => {
 			})
 		})
 
-		it('should post to the api.log uri', () => {
-			let mock = mockapi.post('/log')
+		it('should post a message to the api', () => {
 			return api.log('trace', 'valid').then(response => {
-				let { path, body: { level, message }, headers } = response.data
+				let { data: { level, message, meta }, headers } = response
 
-				assert.equal('Bearer valid', headers.authorization)
-				assert.equal('/log', path)
+				assert.equal(headers.authorization, MOCK_AUTH_TOKEN)
 				assert.equal('trace', level)
 				assert.equal('valid', message)
+				assert.equal(meta, undefined)
+			})
+		})
+
+		it('should post meta to the api', () => {
+			return api.log('trace', 'valid', { sample: 'data' }).then(response => {
+				let { data: { level, message, meta }, headers } = response
+
+				assert.equal(headers.authorization, MOCK_AUTH_TOKEN)
+				assert.equal(level, 'trace')
+				assert.equal(message, 'valid')
+				assert.deepEqual(meta, {"sample":"data"})
 			})
 		})
 	})
