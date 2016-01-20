@@ -29,6 +29,10 @@ describe('forteApi', () => {
 
 	let invalidBranchScopes = [null, '', 1, {}, () => {}]
 
+	afterEach(() => {
+		nock.cleanAll()
+	})
+
 	describe('ctor(credentials, scope, options)', () => {
 		it('should throw if invalid credentials have been provided', () => {
 			let invalidCredentials = [
@@ -135,11 +139,6 @@ describe('forteApi', () => {
 		
 		beforeEach(() => {
 			api = apiFactory(validKeyCreds, validTrunkAndBranchScope)()
-			mockapi.post('/log')
-		})
-
-		afterEach(() => {
-			nock.cleanAll()
 		})
 
 		it('should throw if event is not supported', () => {
@@ -151,22 +150,27 @@ describe('forteApi', () => {
 		})
 
 		it('should invoke the callback function on auth success', (done) => {
+			mockapi.post('/log')
 			api.on('auth', (err, res) => {
+				assert.isNull(err)
 				done()
 			})
 			api.log('trace', 'test')
 		})
 
-		it('should invoke the callback function on auth error')
+		it('should invoke the callback function on auth error', (done) => {
+			mockapi.post('/simulatefailedauth')
+			api.on('auth', (err, res) => {
+				assert.isNotNull(err)
+				done()
+			})
+			api.log('trace', 'test')
+		})
 	})
 
 	describe('api endpoint requests', () => {
 		beforeEach(() => {
 			mockapi.post('/log')
-		})
-
-		afterEach(() => {
-			nock.cleanAll()
 		})
 
 		it('should have response.headers.authorization when using Bearer creds', () => {
@@ -195,10 +199,6 @@ describe('forteApi', () => {
 		beforeEach(() => {
 			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 			mockapi.post('/log')
-		})
-
-		afterEach(() =>{
-			nock.cleanAll()
 		})
 
 		it('should throw if log level is not supported', () => {
@@ -241,7 +241,7 @@ describe('forteApi', () => {
 			})
 		})
 
-		it('should post meta to the api', () => {
+		it('should post a message and meta to the api', () => {
 			return api.log('trace', 'valid', { sample: 'data' }).then(response => {
 				let { data: { level, message, meta }, headers } = response
 
