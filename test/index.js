@@ -34,20 +34,21 @@ describe('forteApi', () => {
 	})
 
 	describe('ctor(credentials, scope, options)', () => {
-		it('should throw if invalid credentials have been provided', () => {
-			let invalidCredentials = [
-				undefined,
-				null,
-				{},
-				{bearerToken: null},
-				{bearerToken: 0},
-				{privateKey: null, publicKey: null},
-				{privateKey: 0, publicKey: 0},
-				{privateKey: 'valid', publicKey: 0},
-				{privateKey: 0, publicKey: 'valid'}
-			]
-			invalidCredentials.forEach(invalidCreds => {
-				assert.throws(apiFactory(invalidCreds, validTrunkScope))
+		let invalidCredentials = [
+			undefined,
+			null,
+			{},
+			{bearerToken: null},
+			{bearerToken: 0},
+			{privateKey: null, publicKey: null},
+			{privateKey: 0, publicKey: 0},
+			{privateKey: 'valid', publicKey: 0},
+			{privateKey: 0, publicKey: 'valid'}
+		]
+
+		invalidCredentials.forEach(invalidCreds => {
+			it(`should throw for credentials ${JSON.stringify(invalidCreds)}`, () => {
+				assert.throws(apiFactory(invalidCreds, validTrunkScope), InvalidArgumentError)
 			})
 		})
 
@@ -56,40 +57,45 @@ describe('forteApi', () => {
 			assert.doesNotThrow(apiFactory(validKeyCreds, validTrunkScope))
 		})
 
-		it('should throw if an invalid a trunk scope has been provided', () => {
-			assert.throws(apiFactory(validTokenCreds, undefined))
-			assert.throws(apiFactory(validTokenCreds, null))
-			assert.throws(apiFactory(validTokenCreds, {}))
-			assert.throws(apiFactory(validTokenCreds, { hostname: 'dealer.client.us', trunk: null }))
-			assert.throws(apiFactory(validTokenCreds, { hostname: 'dealer.client.us', trunk: '' }))
+		let invalidTrunkScopes = [
+			undefined,
+			null,
+			{},
+			{ hostname: 'dealer.client.us', trunk: null },
+			{ hostname: 'dealer.client.us', trunk: '' }
+		]
+		invalidTrunkScopes.forEach(invalid =>{		
+			it(`should throw for trunk scope ${JSON.stringify(invalid)}`, () => {
+				assert.throws(apiFactory(validTokenCreds, invalid), InvalidArgumentError)
+			})
 		})
 
 		it('should throw if an invalid a branch scope has been provided', () => {
 			invalidBranchScopes.forEach(scope => {
-				assert.throws(apiFactory(validTokenCreds, {trunk:'valid', branch: scope}))
+				assert.throws(apiFactory(validTokenCreds, {trunk:'valid', branch: scope}), InvalidArgumentError)
 			})
 		})
 
-		it('should throw if options are invalid', () => {
-			let invalidOptions = [
-				{ url: 0 },
-				{ fingerPrintingEnabled: 'invalid' },
-				{ url: 'valid', fingerPrintingEnabled: 'invalid' },
-				{ url: 0, fingerPrintingEnabled: true }
-			]
-			invalidOptions.forEach(options => {
-				assert.throws(apiFactory(validTokenCreds, validTrunkScope, options))	
+		let invalidOptions = [
+			{ url: 0 },
+			{ fingerPrintingEnabled: 'invalid' },
+			{ url: 'valid', fingerPrintingEnabled: 'invalid' },
+			{ url: 0, fingerPrintingEnabled: true }
+		]
+		invalidOptions.forEach(options => {
+			it(`should throw for options ${JSON.stringify(options)}`, () => {
+				assert.throws(apiFactory(validTokenCreds, validTrunkScope, options), InvalidArgumentError)	
 			})
 		})
 
-		it('should NOT throw if options are valid', () => {
-			let validOptions = [
-				undefined,
-				{ url: 'valid' },
-				{ fingerPrintingEnabled: true },
-				{ url: 'valid', fingerPrintingEnabled: true },
-			]
-			validOptions.forEach(options => {
+		let validOptions = [
+			undefined,
+			{ url: 'valid' },
+			{ fingerPrintingEnabled: true },
+			{ url: 'valid', fingerPrintingEnabled: true },
+		]
+		validOptions.forEach(options => {
+			it(`should NOT throw for options ${JSON.stringify(options)}`, () => {
 				assert.doesNotThrow(apiFactory(validTokenCreds, validTrunkScope, options))	
 			})
 		})
@@ -108,7 +114,7 @@ describe('forteApi', () => {
 			invalidBranchScopes
 				.concat(undefined)
 				.forEach(scope => {
-					assert.throws(() => { api.withBranch(scope) })
+					assert.throws(() => { api.withBranch(scope) }, InvalidArgumentError)
 			})
 		})
 
@@ -226,7 +232,7 @@ describe('forteApi', () => {
 				() => {}
 			]
 			invalidMeta.forEach(meta => {
-				assert.throws(() => { api.log('trace', 'valid', meta) })
+				assert.throws(() => { api.log('trace', 'valid', meta) }, InvalidArgumentError)
 			})
 		})
 
@@ -255,35 +261,55 @@ describe('forteApi', () => {
 
 	describe('api.organizations', () => {
 
-		describe('.getMany', () => {
-			it('should throw if filter is null')
+		describe('.getMany(filter)', () => {
+			let api
+			beforeEach(() => {
+				api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+			})
 
-			describe('when a request succeeds, the return value', () => {
-				let api
-				let query = { status: 'active' }
-				let getManyMock
-				let validResponseData = [{"ID": "1"}, {"ID":"2"}]
-
-				beforeEach(() => {
-					api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
-					getManyMock = mockapi.get(ApiPaths.organizations.getMany(query), 200, validResponseData)
+			let invalidFilters = [null, undefined, {}]
+			invalidFilters.forEach((filter) => {
+				let test = filter ? '{}' : filter
+				it(`should throw if filter is '${test}'`, () => {
+					assert.throws(() => { api.organizations.getMany(filter) }, InvalidArgumentError)
 				})
+			})
 
-				it(`should GET ${ApiPaths.organizations.getMany(query)}'`, () => {
-					return api.organizations.getMany(query).then(response => {
+			let validFilters = [{ status: 'active' }, {id: 1}]
+			validFilters.forEach((filter) => {
+				it(`should build and GET uri: ${ApiPaths.organizations.getMany(filter)}'`, () => {
+					let getManyMock = mockapi.get(ApiPaths.organizations.getMany(filter))
+
+					return api.organizations.getMany(filter).then(response => {
 						getManyMock.done()
 					})
 				})
-				it('should have a "response.data" property')
-			})
-			describe('when a request fails, the return value', () => {
-				it('should have a "response" property')
-				it('should have a "result" property')
 			})
 		})
-		describe('.getOne', () => {
-			it('should throw if filter is null')
+		describe('.getOne(id)', () => {
+			let api
+			beforeEach(() => {
+				api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+			})
 
+			let invalidIDs = [null, undefined, {}, '']
+			invalidIDs.forEach((id) => {
+				let test = id ? '{}' : id
+				it(`should throw if id is '${test}'`, () => {
+					assert.throws(() => { api.organizations.getOne(id) }, InvalidArgumentError)
+				})
+			})
+
+			let validIDs = ['123', '456']
+			validIDs.forEach((id) => {
+				it(`should build and GET uri: ${ApiPaths.organizations.getOne(id)}'`, () => {
+					let getManyMock = mockapi.get(ApiPaths.organizations.getOne(id))
+
+					return api.organizations.getOne(id).then(response => {
+						getManyMock.done()
+					})
+				})
+			})
 		})
 	})
 })

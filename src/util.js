@@ -3,8 +3,11 @@ import { stringify } from 'querystring'
 export const ApiPaths = {
 	log: '/developer/log',
 	organizations: {
-		getMany(query) {
-			return `/organizations/?${stringify(query)}`
+		getMany(filter) {
+			return `/organizations/?${stringify(filter)}`
+		},
+		getOne(id) {
+			return `/organizations/${id}`
 		}
 	}
 }

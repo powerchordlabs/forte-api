@@ -43,9 +43,13 @@ function forteApi(credentials, scope, options) {
 			return client.post(ApiPaths.log, { data: { level, message, meta } })
 		},
 		organizations: {
-			getMany(query){
-				// TODO validate query
-				return client.get(ApiPaths.organizations.getMany(query))
+			getMany(filter){
+				validateArgs('organizations_getMany', arguments)
+				return client.get(ApiPaths.organizations.getMany(filter))
+			},
+			getOne(id){
+				validateArgs('organizations_getOne', arguments)
+				return client.get(ApiPaths.organizations.getOne(id))
 			}
 		}
 
@@ -62,13 +66,22 @@ function argumentError(name) {
 }
 
 function validateArgs(method, args) {
+	// TODO, add NODE_ENV='production' check here so we can skip validation in production mode
 	validators[method].apply(null, args)
 }
 
+function isEmptyObject(obj){
+	return !obj || typeof obj !== 'object' || Object.keys(obj).length === 0
+}
+
+function isInvalidString(obj) {
+	return typeof obj !== 'string' || obj.trim() === ''
+}
+
 const validators = {
-	createApi: (credentials, scope, options) => {
+	createApi(credentials, scope, options) {
 		function verifyCredentials(credentials) {
-			if(typeof credentials === 'undefined'){
+			if(!credentials){
 				argumentError('credentials')
 			}
 
@@ -122,12 +135,12 @@ const validators = {
 		verifyScope(scope)
 		verifyOptions(options)
 	},
-	withBranch: (id) => {
+	withBranch(id) {
 		if(id === undefined){
 			throw new InvalidArgumentError('id')
 		}
 	},
-	log: (level, message, meta) => {
+	log(level, message, meta) {
 		if(LOG_LEVELS.indexOf(level) === -1) {
 			argumentError('Log level "' + level + '" is invalid. Use one of: ' + LOG_LEVELS.join(', '))
 		}
@@ -140,13 +153,23 @@ const validators = {
 			argumentError('Meta "' + meta + '" is invalid.')
 		}
 	},
-	on: (name, callback) => {
+	on(name, callback) {
 		if(name !== 'auth') {
 			argumentError('"' + name + '" is not a supported event.')
 		}
 
 		if(typeof callback !== 'function') {
 			argumentError('callback must be a function.')
+		}
+	},
+	organizations_getMany(filter) {
+		if(isEmptyObject(filter)) {
+			argumentError('filter')
+		}
+	},
+	organizations_getOne(id) {
+		if(isInvalidString(id)) {
+			argumentError('id')
 		}
 	}
 }
