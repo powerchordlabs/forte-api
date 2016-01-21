@@ -46,6 +46,9 @@ export const ApiPaths = {
 			return `/forte/${scope.trunk}/${scope.branch}/content/${type}/${id}`
 		}
 	},
+	composite: {
+		query: '/composite'
+	}
 }
 
 

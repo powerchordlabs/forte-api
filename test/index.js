@@ -350,7 +350,14 @@ describe('forteApi', () => {
 		const contentType = 'PRODUCT'
 
 		describe('.getMany(type, filter)', () => {
-			let invalidFilters = [null, undefined, {}]
+			let invalidTypes = [null, undefined, {}, '']
+			invalidTypes.forEach((type) => {
+				it(`should throw for type '${JSON.stringify(type)}'`, () => {
+					assert.throws(() => { api.content.getMany(type, { status: 'active' }) }, InvalidArgumentError)
+				})
+			})
+
+			let invalidFilters = [null, undefined, {}, '']
 			invalidFilters.forEach((filter) => {
 				it(`should throw for filter '${JSON.stringify(filter)}'`, () => {
 					assert.throws(() => { api.content.getMany(contentType, filter) }, InvalidArgumentError)
@@ -371,10 +378,18 @@ describe('forteApi', () => {
 		})
 
 		describe('.getOne(type, id)', () => {
+
+			let invalidTypes = [null, undefined, {}, '']
+			invalidTypes.forEach((type) => {
+				it(`should throw for type '${JSON.stringify(type)}'`, () => {
+					assert.throws(() => { api.content.getOne(type, 'VALID_ID') }, InvalidArgumentError)
+				})
+			})
+
 			let invalidIDs = [null, undefined, {}, '']
 			invalidIDs.forEach((id) => {
 				it(`should throw for id '${JSON.stringify(id)}'`, () => {
-					assert.throws(() => { api.content.getOne(validTrunkAndBranchScope, id) }, InvalidArgumentError)
+					assert.throws(() => { api.content.getOne('VALID_TYPE', id) }, InvalidArgumentError)
 				})
 			})
 
@@ -386,6 +401,46 @@ describe('forteApi', () => {
 
 					return api.content.getOne(contentType, id).then(response => {
 						getManyMock.done()
+					})
+				})
+			})
+		})
+	})
+
+	describe('api.composite', () => {
+
+		describe('.query(query)', () => {
+
+			let invalidQueries = [null, undefined, {}, '', () => {}]
+			invalidQueries.forEach((query) => {
+				it(`should throw for query '${JSON.stringify(query)}'`, () => {
+					assert.throws(() => { api.composite.query(query) }, InvalidArgumentError)
+				})
+			})
+
+			let validQueries = [
+				{ 
+					"screen": { 
+					"tenant": { 
+						"_resourceDefined": true, 
+						"_resource": "tenants", 
+						"_paramsRequested": true, 
+						"_params": { 
+							"activeContext": true 
+						}, 
+						"_singular": true 
+					}
+					}
+				}
+			]
+			validQueries.forEach((query) => {
+				let expected = expectedUri(ApiPaths.composite.query)
+				//it(`should POST uri: ${expected} with body ${JSON.stringify(query)}`, () => {
+				it(`should POST uri: ${expected}`, () => {
+					let getCompositeMock = mockapi.post(expected, 200, query)
+
+					return api.composite.query(query).then(response => {
+						getCompositeMock.done()
 					})
 				})
 			})

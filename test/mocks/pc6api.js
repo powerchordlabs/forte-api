@@ -13,10 +13,10 @@ export default {
 	    	.get(url)
 	    	.reply(status, response, okHeaders)
 	},
-	post: (url, status = 200) => {
+	post: (url, status = 200, body) => {
 		return nock('http://api.pclocal.us', defaultOptions)
 			.matchHeader('Authorization', matchRequestAuthHeader)
-	    	.post(url)
+	    	.post(url, body)
 	    	.reply(status, formatNockResponse, okHeaders)
 	}
 }

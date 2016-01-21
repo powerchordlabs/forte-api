@@ -71,6 +71,12 @@ function forteApi(credentials, scope, options) {
 				validateArgs('content_getOne', arguments)
 				return client.get(ApiPaths.content.getOne(scope, type, id))
 			}
+		},
+		composite: {
+			query(query) {
+				validateArgs('composite_query', arguments) 
+				return client.post(ApiPaths.composite.query, { data: query })
+			}
 		}
 	}
 }
@@ -205,6 +211,11 @@ const validators = {
 		}
 		if(isInvalidString(id)) {
 			argumentError('id')
+		}
+	},
+	composite_query(query) {
+		if(isEmptyObject(query)) {
+			argumentError('query')
 		}
 	}
 }
