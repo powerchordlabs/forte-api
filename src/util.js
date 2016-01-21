@@ -3,14 +3,21 @@ import { stringify } from 'querystring'
 export const ApiPaths = {
 	log: '/developer/log',
 	organizations: {
-		getMany(filter) {
-			//return `/organizations/?${stringify(filter)}`
+		getMany() {
 			return `/organizations/`
 		},
 		getOne(id) {
 			return `/organizations/${id}`
 		}
-	}
+	},
+	locations: {
+		getMany(scope) {
+			return `/forte/organizations/${scope.trunk}/${scope.branch}/locations/`
+		},
+		getOne(scope, id) {
+			return `/forte/organizations/${scope.trunk}/${scope.branch}/locations/${id}`
+		}
+	},
 }
 
 /*

@@ -16,8 +16,8 @@ function createApi(credentials, scope, options) {
 
 function forteApi(credentials, scope, options) {
 	let authToken;
-	let client = new ApiClient(scope.hostname, credentials, options.url, (err, response) => {
-		eventRegistry.auth.forEach((cb => cb(err, response)))
+	let client = new ApiClient(scope.hostname, credentials, options.url, (err, token) => {
+		eventRegistry.auth.forEach((cb => cb(err, token)))
 	});
 
 	let eventRegistry = {
@@ -44,12 +44,22 @@ function forteApi(credentials, scope, options) {
 		},
 		organizations: {
 			getMany(filter){
-				validateArgs('organizations_getMany', arguments)
+				validateArgs('entity_getMany', arguments)
 				return client.get(ApiPaths.organizations.getMany(), { params: filter })
 			},
 			getOne(id){
-				validateArgs('organizations_getOne', arguments)
+				validateArgs('entity_getOne', arguments)
 				return client.get(ApiPaths.organizations.getOne(id))
+			}
+		},
+		locations: {
+			getMany(filter){
+				validateArgs('entity_getMany', arguments)
+				return client.get(ApiPaths.locations.getMany(scope), { params: filter })
+			},
+			getOne(id){
+				validateArgs('entity_getOne', arguments)
+				return client.get(ApiPaths.locations.getOne(scope, id))
 			}
 		}
 
@@ -162,12 +172,12 @@ const validators = {
 			argumentError('callback must be a function.')
 		}
 	},
-	organizations_getMany(filter) {
+	entity_getMany(filter) {
 		if(isEmptyObject(filter)) {
 			argumentError('filter')
 		}
 	},
-	organizations_getOne(id) {
+	entity_getOne(id) {
 		if(isInvalidString(id)) {
 			argumentError('id')
 		}

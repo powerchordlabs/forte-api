@@ -70,7 +70,8 @@ class Client {
         request.end((err, res) => {
           let parsed = this.formatResponse(err ? err.response || err : res)
 
-          onAuth && onAuth(err, parsed)
+          // all succesful api responses have auth header
+          onAuth && onAuth(err, err ? null : res.headers.authorization)
 
           err ? reject(parsed) : resolve(parsed)
         });

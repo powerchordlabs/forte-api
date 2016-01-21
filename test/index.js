@@ -30,6 +30,12 @@ describe('forteApi', () => {
 
 	let invalidBranchScopes = [null, '', 1, {}, () => {}]
 
+	let api
+
+	beforeEach(() => {
+		api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+	})
+
 	afterEach(() => {
 		nock.cleanAll()
 	})
@@ -103,11 +109,9 @@ describe('forteApi', () => {
 	})
 
 	describe('.withBranch(id)', () => {
-		let api
 		let branchApi
 		
 		beforeEach(() => {
-			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 			branchApi = api.withBranch('branchid')
 		})
 
@@ -130,24 +134,18 @@ describe('forteApi', () => {
 	})
 
 	describe('.getScope()', () => {
-		let api
 		
-		beforeEach(() => {
-			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
-		})
-
 		it('should return the api scope', () => {
 			assert.deepEqual(api.getScope(), validTrunkAndBranchScope)
 		})
 	})
 
 	describe('.on("auth", callback)', () => {
-		let api
-		
+
 		beforeEach(() => {
 			api = apiFactory(validKeyCreds, validTrunkAndBranchScope)()
 		})
-
+		
 		it('should throw if event is not supported', () => {
 			assert.throws(() => { api.on('invalid', () => {}) }, InvalidArgumentError)
 		})
@@ -158,8 +156,9 @@ describe('forteApi', () => {
 
 		it('should invoke the callback function on auth success', (done) => {
 			mockapi.post(ApiPaths.log)
-			api.on('auth', (err, res) => {
+			api.on('auth', (err, token) => {
 				assert.isNull(err)
+				assert.equal(token, MOCK_AUTH_TOKEN)
 				done()
 			})
 			api.log('trace', 'test')
@@ -167,8 +166,9 @@ describe('forteApi', () => {
 
 		it('should invoke the callback function on auth error', (done) => {
 			mockapi.post('/developer/log', 401)
-			api.on('auth', (err, res) => {
+			api.on('auth', (err, token) => {
 				assert.isNotNull(err)
+				assert.isNull(token)
 				done()
 			})
 			api.log('trace', 'test')
@@ -181,8 +181,6 @@ describe('forteApi', () => {
 		})
 
 		it('should have response.headers.authorization when using Bearer creds', () => {
-			let api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
-
 			return api.log('trace', 'valid').then(response => {
 				let { headers } = response
 				assert.equal(headers.authorization, MOCK_AUTH_TOKEN)
@@ -190,8 +188,6 @@ describe('forteApi', () => {
 		})
 
 		it('should have response.headers.authorization when using Checksum creds', () => {
-			let api = apiFactory(validKeyCreds, validTrunkAndBranchScope)()
-
 			return api.log('trace', 'valid').then(response => {
 				let { headers } = response
 
@@ -201,10 +197,8 @@ describe('forteApi', () => {
 	})
 
 	describe('api.log(level, message, [meta])', () => {
-		let api
-		
+
 		beforeEach(() => {
-			api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 			mockapi.post(ApiPaths.log)
 		})
 
@@ -263,12 +257,6 @@ describe('forteApi', () => {
 	describe('api.organizations', () => {
 
 		describe('.getMany(filter)', () => {
-			let api
-
-			beforeEach(() => {
-				api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
-			})
-
 			let invalidFilters = [null, undefined, {}]
 			invalidFilters.forEach((filter) => {
 				it(`should throw for filter '${JSON.stringify(filter)}'`, () => {
@@ -276,7 +264,7 @@ describe('forteApi', () => {
 				})
 			})
 
-			let validFilters = [{ status: 'active' }, {id: 1}]
+			let validFilters = [{ status: 'active' }, {trunkID: 'valid'}]
 			validFilters.forEach((filter) => {
 				let expected = expectedUri(ApiPaths.organizations.getMany(), filter)
 				it(`should GET uri: ${expected}`, () => {
@@ -288,11 +276,8 @@ describe('forteApi', () => {
 				})
 			})
 		})
+
 		describe('.getOne(id)', () => {
-			let api
-			beforeEach(() => {
-				api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
-			})
 
 			let invalidIDs = [null, undefined, {}, '']
 			invalidIDs.forEach((id) => {
@@ -307,6 +292,50 @@ describe('forteApi', () => {
 					let getManyMock = mockapi.get(ApiPaths.organizations.getOne(id))
 
 					return api.organizations.getOne(id).then(response => {
+						getManyMock.done()
+					})
+				})
+			})
+		})
+	})
+
+	describe('api.locations', () => {
+
+		describe('.getMany(filter)', () => {
+			let invalidFilters = [null, undefined, {}]
+			invalidFilters.forEach((filter) => {
+				it(`should throw for filter '${JSON.stringify(filter)}'`, () => {
+					assert.throws(() => { api.locations.getMany(filter) }, InvalidArgumentError)
+				})
+			})
+
+			let validFilters = [{ status: 'active' }, {trunkID: 'valid'}]
+			validFilters.forEach((filter) => {
+				let expected = expectedUri(ApiPaths.locations.getMany(validTrunkAndBranchScope), filter)
+				it(`should GET uri: ${expected}`, () => {
+					let getManyMock = mockapi.get(expected, 200)
+
+					return api.locations.getMany(filter).then(response => {
+						getManyMock.done()
+					})
+				})
+			})
+		})
+
+		describe('.getOne(id)', () => {
+			let invalidIDs = [null, undefined, {}, '']
+			invalidIDs.forEach((id) => {
+				it(`should throw for id '${JSON.stringify(id)}'`, () => {
+					assert.throws(() => { api.locations.getOne(validTrunkAndBranchScope, id) }, InvalidArgumentError)
+				})
+			})
+
+			let validIDs = ['123', '456']
+			validIDs.forEach((id) => {
+				it(`should build and GET uri: ${ApiPaths.locations.getOne(validTrunkAndBranchScope, id)}'`, () => {
+					let getManyMock = mockapi.get(ApiPaths.locations.getOne(validTrunkAndBranchScope, id))
+
+					return api.locations.getOne(id).then(response => {
 						getManyMock.done()
 					})
 				})

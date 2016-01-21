@@ -26,6 +26,7 @@ By default ForteApi will perform a browser fingerprint on the client via a non-b
     * [Endpoints](#endpoints)
         * [log](#log)
         * [organizations](#organizations)
+        * [locations](#locations)
         * [analytics](#analytics)
         * [composite](#composite)
 
@@ -279,22 +280,44 @@ api.organizations.getMany({status: 'active'}).then((response) => {
 })
 ```
 
-##### api.organizations.getOne(filter): {organization}  
-Returns one organization matching the filter option(s). In the event your filter matches multple items, only the first one will be returned. 
+##### api.organizations.getOne(id): {organization}  
+Returns one organization.
 
 ###### args:
-* `filter: {string|Object}`  
-A string trunkID or a json object that is used to filter results from the api.
+* `id: {string}`  
+The id of the organization to get.
 
 ```js
-// return the item with trunkID=1
 api.organizations.getOne('1').then((response) => {
-  console.log('organziation:', response.data)
+  console.log('organization:', response.data)
 })
+```
 
-// is equivalent to
-api.organizations.getOne({trunkID: '1'}).then((response) => {
-  console.log('organziation:', response.data)
+#### Locations
+##### api.locations.getMany(filter): [{location}, ...]
+Returns an array of location objects matching the `filter` option(s).
+
+###### args:
+* `filter: {Object}`  
+A json object that is used to filter results from the api.
+
+```js
+// return all active items
+api.locations.getMany({status: 'active'}).then((response) => {
+  console.log('locations:', response.data)
+})
+```
+
+##### api.locations.getOne(id): {location}  
+Returns one location.
+
+###### args:
+* `id: {string}`  
+The id of the location to get.
+
+```js
+api.locations.getOne('1').then((response) => {
+  console.log('location:', response.data)
 })
 ```
 
