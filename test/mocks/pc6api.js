@@ -30,5 +30,5 @@ const okHeaders = {
 }
 
 function matchRequestAuthHeader(value) {
-	return value === 'Bearer valid' || /^Checksum valid:(\d+):([^:]+):(dealer\.client\.us)$/.test(value)
+	return value === 'Bearer VALID_TOKEN' || /^Checksum VALID_PUBLICKEY:(\d+):([^:]+):(dealer\.client\.us)$/.test(value)
 }

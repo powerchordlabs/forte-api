@@ -19,10 +19,10 @@ describe('forteApi', () => {
 		}
 	}
 
-	let validTokenCreds = {bearerToken: 'Bearer valid'}
-	let validKeyCreds = {privateKey: 'valid', publicKey: 'valid'}
-	let validTrunkScope = { hostname: 'dealer.client.us', trunk: 'valid' }
-	let validTrunkAndBranchScope = { hostname: 'dealer.client.us', trunk: 'valid', branch: 'valid' }
+	let validTokenCreds = {bearerToken: 'Bearer VALID_TOKEN'}
+	let validKeyCreds = {privateKey: 'VALID_PRIVATEKEY', publicKey: 'VALID_PUBLICKEY'}
+	let validTrunkScope = { hostname: 'dealer.client.us', trunk: 'VALID_TRUNK' }
+	let validTrunkAndBranchScope = { hostname: 'dealer.client.us', trunk: 'VALID_TRUNK', branch: 'VALID_BRANCH' }
 	let validOptions = {
 		url: 'https://api.pclocal.us',
 		fingerPrintingEnabled: true
@@ -145,7 +145,7 @@ describe('forteApi', () => {
 		beforeEach(() => {
 			api = apiFactory(validKeyCreds, validTrunkAndBranchScope)()
 		})
-		
+
 		it('should throw if event is not supported', () => {
 			assert.throws(() => { api.on('invalid', () => {}) }, InvalidArgumentError)
 		})
@@ -264,7 +264,7 @@ describe('forteApi', () => {
 				})
 			})
 
-			let validFilters = [{ status: 'active' }, {trunkID: 'valid'}]
+			let validFilters = [{ status: 'active' }, {IsTrunk: true}]
 			validFilters.forEach((filter) => {
 				let expected = expectedUri(ApiPaths.organizations.getMany(), filter)
 				it(`should GET uri: ${expected}`, () => {
@@ -288,8 +288,9 @@ describe('forteApi', () => {
 
 			let validIDs = ['123', '456']
 			validIDs.forEach((id) => {
-				it(`should build and GET uri: ${ApiPaths.organizations.getOne(id)}'`, () => {
-					let getManyMock = mockapi.get(ApiPaths.organizations.getOne(id))
+				let expected = ApiPaths.organizations.getOne(id)
+				it(`should build and GET uri: ${expected}'`, () => {
+					let getManyMock = mockapi.get(expected)
 
 					return api.organizations.getOne(id).then(response => {
 						getManyMock.done()
@@ -309,7 +310,7 @@ describe('forteApi', () => {
 				})
 			})
 
-			let validFilters = [{ status: 'active' }, {trunkID: 'valid'}]
+			let validFilters = [{ status: 'active' }, {isPrimary: true}]
 			validFilters.forEach((filter) => {
 				let expected = expectedUri(ApiPaths.locations.getMany(validTrunkAndBranchScope), filter)
 				it(`should GET uri: ${expected}`, () => {
@@ -332,10 +333,58 @@ describe('forteApi', () => {
 
 			let validIDs = ['123', '456']
 			validIDs.forEach((id) => {
-				it(`should build and GET uri: ${ApiPaths.locations.getOne(validTrunkAndBranchScope, id)}'`, () => {
-					let getManyMock = mockapi.get(ApiPaths.locations.getOne(validTrunkAndBranchScope, id))
+				let expected = ApiPaths.locations.getOne(validTrunkAndBranchScope, id)
+				it(`should build and GET uri: ${expected}`, () => {
+					let getManyMock = mockapi.get(expected)
 
 					return api.locations.getOne(id).then(response => {
+						getManyMock.done()
+					})
+				})
+			})
+		})
+	})
+
+	describe('api.content', () => {
+
+		const contentType = 'PRODUCT'
+
+		describe('.getMany(type, filter)', () => {
+			let invalidFilters = [null, undefined, {}]
+			invalidFilters.forEach((filter) => {
+				it(`should throw for filter '${JSON.stringify(filter)}'`, () => {
+					assert.throws(() => { api.content.getMany(contentType, filter) }, InvalidArgumentError)
+				})
+			})
+
+			let validFilters = [{ status: 'active' }, {isPrimary: true}]
+			validFilters.forEach((filter) => {
+				let expected = expectedUri(ApiPaths.content.getMany(validTrunkAndBranchScope, contentType), filter)
+				it(`should GET uri: ${expected}`, () => {
+					let getManyMock = mockapi.get(expected)
+
+					return api.content.getMany(contentType, filter).then(response => {
+						getManyMock.done()
+					})
+				})
+			})
+		})
+
+		describe('.getOne(type, id)', () => {
+			let invalidIDs = [null, undefined, {}, '']
+			invalidIDs.forEach((id) => {
+				it(`should throw for id '${JSON.stringify(id)}'`, () => {
+					assert.throws(() => { api.content.getOne(validTrunkAndBranchScope, id) }, InvalidArgumentError)
+				})
+			})
+
+			let validIDs = ['123', '456']
+			validIDs.forEach((id) => {
+				let expected = ApiPaths.content.getOne(validTrunkAndBranchScope, contentType, id)
+				it(`should build and GET uri: ${expected}`, () => {
+					let getManyMock = mockapi.get(expected)
+
+					return api.content.getOne(contentType, id).then(response => {
 						getManyMock.done()
 					})
 				})

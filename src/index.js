@@ -61,8 +61,17 @@ function forteApi(credentials, scope, options) {
 				validateArgs('entity_getOne', arguments)
 				return client.get(ApiPaths.locations.getOne(scope, id))
 			}
+		},
+		content: {
+			getMany(type, filter){
+				validateArgs('content_getMany', arguments)
+				return client.get(ApiPaths.content.getMany(scope, type), { params: filter })
+			},
+			getOne(type, id){
+				validateArgs('content_getOne', arguments)
+				return client.get(ApiPaths.content.getOne(scope, type, id))
+			}
 		}
-
 	}
 }
 
@@ -178,6 +187,22 @@ const validators = {
 		}
 	},
 	entity_getOne(id) {
+		if(isInvalidString(id)) {
+			argumentError('id')
+		}
+	},
+	content_getMany(type, filter) {
+		if(isInvalidString(type)) {
+			argumentError('type')
+		}
+		if(isEmptyObject(filter)) {
+			argumentError('filter')
+		}
+	},
+	content_getOne(type, id) {
+		if(isInvalidString(type)) {
+			argumentError('type')
+		}
 		if(isInvalidString(id)) {
 			argumentError('id')
 		}

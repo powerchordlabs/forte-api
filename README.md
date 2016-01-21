@@ -27,6 +27,7 @@ By default ForteApi will perform a browser fingerprint on the client via a non-b
         * [log](#log)
         * [organizations](#organizations)
         * [locations](#locations)
+        * [content](#content)
         * [analytics](#analytics)
         * [composite](#composite)
 
@@ -318,6 +319,38 @@ The id of the location to get.
 ```js
 api.locations.getOne('1').then((response) => {
   console.log('location:', response.data)
+})
+```
+
+#### Content
+##### api.content.getMany(type, filter): [{content}, ...]
+Returns an array of content objects matching the `type` and `filter` option(s).
+
+###### args:
+* `type: {string}`  
+The type of content to get.
+* `filter: {Object}`  
+A json object that is used to filter results from the api.
+
+```js
+// return all active items
+api.content.getMany('PRODUCT', {status: 'active'}).then((response) => {
+  console.log('content items:', response.data)
+})
+```
+
+##### api.content.getOne(type, id): {content}  
+Returns one content object.
+
+###### args:
+* `type: {string}`  
+The type of content to get.
+* `id: {string}`  
+The id of the content to get.
+
+```js
+api.locations.getOne('PRODUCT', '1').then((response) => {
+  console.log('content item:', response.data)
 })
 ```
 
