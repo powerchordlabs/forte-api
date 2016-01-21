@@ -12,7 +12,7 @@ function authMiddleware(superagent, hostname, credentials){
     } else {
       let UTCTimestamp = new Date().getTime()
       let FQDN = hostname
-      let checksum = crypto.createHash('sha512').update([credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join('')).digest('hex')
+      let checksum = crypto.createHash('sha256').update([credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join('')).digest('hex')
 
       authHeader = `Checksum ${credentials.publicKey}:${UTCTimestamp}:${checksum}:${FQDN}`
     }
