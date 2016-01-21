@@ -269,8 +269,7 @@ describe('forteApi', () => {
 
 			let invalidFilters = [null, undefined, {}]
 			invalidFilters.forEach((filter) => {
-				let test = filter ? '{}' : filter
-				it(`should throw if filter is '${test}'`, () => {
+				it(`should throw for filter '${JSON.stringify(filter)}'`, () => {
 					assert.throws(() => { api.organizations.getMany(filter) }, InvalidArgumentError)
 				})
 			})
@@ -294,8 +293,7 @@ describe('forteApi', () => {
 
 			let invalidIDs = [null, undefined, {}, '']
 			invalidIDs.forEach((id) => {
-				let test = id ? '{}' : id
-				it(`should throw if id is '${test}'`, () => {
+				it(`should throw for id '${JSON.stringify(id)}'`, () => {
 					assert.throws(() => { api.organizations.getOne(id) }, InvalidArgumentError)
 				})
 			})
