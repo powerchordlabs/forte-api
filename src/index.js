@@ -41,6 +41,12 @@ function forteApi(credentials, scope, options) {
 		log(level, message, meta) {
 			validateArgs('log', arguments) 
 			return client.post(ApiPaths.log, { data: { level, message, meta } })
+		},
+		organizations: {
+			getMany(query){
+				// TODO validate query
+				return client.get(ApiPaths.organizations.getMany(query))
+			}
 		}
 
 	}

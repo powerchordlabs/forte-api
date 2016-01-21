@@ -7,6 +7,12 @@ const defaultOptions = {
 }
 
 export default {
+	get: (url, status = 200, mockResponse) => {
+		return nock('https://api.pclocal.us', defaultOptions)
+			.matchHeader('Authorization', matchRequestAuthHeader)
+	    	.get(url)
+	    	.reply(status, mockResponse, okHeaders)
+	},
 	post: (url, status = 200) => {
 		return nock('https://api.pclocal.us', defaultOptions)
 			.matchHeader('Authorization', matchRequestAuthHeader)

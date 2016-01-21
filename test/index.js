@@ -254,10 +254,26 @@ describe('forteApi', () => {
 	})
 
 	describe('api.organizations', () => {
+
 		describe('.getMany', () => {
 			it('should throw if filter is null')
+
 			describe('when a request succeeds, the return value', () => {
-				it('should have a "response" property')
+				let api
+				let query = { status: 'active' }
+				let getManyMock
+				let validResponseData = [{"ID": "1"}, {"ID":"2"}]
+
+				beforeEach(() => {
+					api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
+					getManyMock = mockapi.get(ApiPaths.organizations.getMany(query), 200, validResponseData)
+				})
+
+				it(`should GET ${ApiPaths.organizations.getMany(query)}'`, () => {
+					return api.organizations.getMany(query).then(response => {
+						getManyMock.done()
+					})
+				})
 				it('should have a "response.data" property')
 			})
 			describe('when a request fails, the return value', () => {

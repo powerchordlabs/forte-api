@@ -1,5 +1,12 @@
+import { stringify } from 'querystring'
+
 export const ApiPaths = {
-	log: '/developer/log'
+	log: '/developer/log',
+	organizations: {
+		getMany(query) {
+			return `/organizations/?${stringify(query)}`
+		}
+	}
 }
 
 /*
