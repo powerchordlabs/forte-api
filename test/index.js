@@ -1,4 +1,5 @@
 import { assert } from 'chai'
+import { stringify } from 'querystring'
 import forteApi from '../src'
 import { InvalidArgumentError, ApiPaths } from '../src/util'
 
@@ -6,7 +7,7 @@ import nock from 'nock'
 import mockapi, { MOCK_AUTH_TOKEN } from './mocks/pc6api'
 
 const DEFAULT_OPTIONS = {
-	url: 'https://api.pclocal.us',
+	url: 'http://api.pclocal.us',
 	fingerPrintingEnabled: true
 }
 
@@ -165,7 +166,7 @@ describe('forteApi', () => {
 		})
 
 		it('should invoke the callback function on auth error', (done) => {
-			mockapi.post('/simulatefailedauth')
+			mockapi.post('/developer/log', 401)
 			api.on('auth', (err, res) => {
 				assert.isNotNull(err)
 				done()
@@ -263,6 +264,7 @@ describe('forteApi', () => {
 
 		describe('.getMany(filter)', () => {
 			let api
+
 			beforeEach(() => {
 				api = apiFactory(validTokenCreds, validTrunkAndBranchScope)()
 			})
@@ -276,8 +278,9 @@ describe('forteApi', () => {
 
 			let validFilters = [{ status: 'active' }, {id: 1}]
 			validFilters.forEach((filter) => {
-				it(`should build and GET uri: ${ApiPaths.organizations.getMany(filter)}'`, () => {
-					let getManyMock = mockapi.get(ApiPaths.organizations.getMany(filter))
+				let expected = expectedUri(ApiPaths.organizations.getMany(), filter)
+				it(`should GET uri: ${expected}`, () => {
+					let getManyMock = mockapi.get(expected, 200)
 
 					return api.organizations.getMany(filter).then(response => {
 						getManyMock.done()
@@ -311,3 +314,8 @@ describe('forteApi', () => {
 		})
 	})
 })
+
+// only used for assert output, not actual test
+function expectedUri(path, query) {
+	return path + (query ? '?' + stringify(query) : '')
+}

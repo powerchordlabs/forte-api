@@ -45,7 +45,7 @@ function forteApi(credentials, scope, options) {
 		organizations: {
 			getMany(filter){
 				validateArgs('organizations_getMany', arguments)
-				return client.get(ApiPaths.organizations.getMany(filter))
+				return client.get(ApiPaths.organizations.getMany(), { params: filter })
 			},
 			getOne(id){
 				validateArgs('organizations_getOne', arguments)

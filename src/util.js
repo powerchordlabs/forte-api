@@ -4,7 +4,8 @@ export const ApiPaths = {
 	log: '/developer/log',
 	organizations: {
 		getMany(filter) {
-			return `/organizations/?${stringify(filter)}`
+			//return `/organizations/?${stringify(filter)}`
+			return `/organizations/`
 		},
 		getOne(id) {
 			return `/organizations/${id}`
