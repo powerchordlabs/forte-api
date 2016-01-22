@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import superagent from 'superagent';
+const debug = require('debug')('forte-api:client')
 
 const METHODS = ['get', 'post', 'put', 'patch', 'del'];
 
@@ -10,10 +11,14 @@ function authMiddleware(superagent, hostname, credentials){
     if (credentials.bearerToken) {
       authHeader = `${credentials.bearerToken}`
     } else {
-      let UTCTimestamp = new Date().getTime()
+      let UTCTimestamp = Math.floor((new Date()).getTime() / 1000)//new Date().getTime()
       let FQDN = hostname
-      let hash = crypto.createHash('sha256').update([credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join(':')).digest('hex')
-
+      let checkSumData = [credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join(':')
+      debug('checkSumData %s', checkSumData)
+      
+      let hash = crypto.createHash('sha256').update(checkSumData).digest('hex')
+      debug('hash %s', hash)
+      
       authHeader = `Checksum ${[credentials.publicKey, UTCTimestamp, hash, FQDN].join(':')}`
     }
 

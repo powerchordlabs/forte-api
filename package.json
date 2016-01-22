@@ -2,7 +2,7 @@
   "name": "forte-api",
   "version": "1.0.0",
   "description": "A fluent wrapper for the Powerchord Forte REST API",
-  "main": "lib/index",
+  "main": "./lib",
   "scripts": {
     "build": "babel -d lib/ src/",
     "test": "mocha --compilers js:babel-register",
@@ -35,6 +35,7 @@
     "supertest": "^1.1.0"
   },
   "dependencies": {
+    "debug": "^2.2.0",
     "superagent": "^1.6.1"
   }
 }
