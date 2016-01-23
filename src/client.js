@@ -73,6 +73,8 @@ class Client {
         }
 
         request.end((err, res) => {
+          if(err){ debug(`client.${method} error: %o`, err) }
+            
           let parsed = this.formatResponse(err ? err.response || err : res)
 
           // all succesful api responses have auth header
