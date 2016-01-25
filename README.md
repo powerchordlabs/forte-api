@@ -24,7 +24,6 @@ By default ForteApi will perform a browser fingerprint on the client via a non-b
       * [Organization Scopes](#organization-scopes)
     * [Events](#events)
     * [Endpoints](#endpoints)
-        * [log](#log)
         * [organizations](#organizations)
         * [locations](#locations)
         * [content](#content)
@@ -241,30 +240,6 @@ HTTP status code of the response.
 HTTP status text of the response.
 * `headers: {Object}`  
 HTTP headers of the response.
-
-#### Log
-##### api.log(level, message, [meta])
-
-Writes a log message to the PowerChord platform.
-
-###### args:
-* `level: {string}`  
-The log level.  
-*supported values:* `trace, debug, info, warn, error, fatal`  
-* `message: {string}`  
-The message to write.  
-* `meta: {Object}`  
-An optional json object to write.
-
-``` js
-import ForteApi from 'forte-api'
-let api = ForteApi(credentials, organization, options);
-
-api.log('info', 'I thought this was interesting...')
-api.log('warn', 'This does not look good...')
-api.log('error', 'This is bad man... really bad!', { exception: ex})
-api.log('fatal', 'GAME OVER!!!', { exception: ex})
-```
 
 #### Organizations
 ##### api.organizations.getMany(filter): [{organization}, ...]
