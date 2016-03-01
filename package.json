@@ -1,16 +1,16 @@
 {
-  "name": "forte-api",
-  "version": "1.0.0",
+  "name": "@powerchord/forte-api",
   "description": "A fluent wrapper for the Powerchord Forte REST API",
   "main": "./lib",
   "scripts": {
     "build": "babel -d lib/ src/",
     "test": "mocha --compilers js:babel-register",
-    "cover": "babel-node ./node_modules/.bin/isparta cover _mocha"
+    "cover": "babel-node ./node_modules/.bin/isparta cover _mocha",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/powerchordinc/forte-api.git"
+    "url": "https://github.com/powerchordinc/forte-api.git"
   },
   "keywords": [
     "forte",
@@ -32,7 +32,8 @@
     "istanbul": "^0.4.2",
     "mocha": "^2.3.4",
     "nock": "^5.2.1",
-    "supertest": "^1.1.0"
+    "supertest": "^1.1.0",
+    "semantic-release": "^4.3.5"
   },
   "dependencies": {
     "debug": "^2.2.0",
