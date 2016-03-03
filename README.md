@@ -127,6 +127,8 @@ Used to manage Authentication for api requests.
     * `privateKey: {string}`, `publicKey: {string}` **server-side only**  
     If `bearerToken` is null, an attempt will be made to use the `publicKey` and `privateKey` fields to generate a bearerToken for you. You can use the `on('auth', cb)` handler to subscribe to the 'auth' event and capture the bearerToken for later use, e.g. injecting the token in a client-side global.
 * `scope: {Object}`  
+  * `hostname: {string}`  
+  Sets the hostname scope for all requests, this is typically the TLD for your XPerience.
   * `trunk: {string}`  
   Sets the trunk scope for all requests. See [Organization Scopes](#organization-scopes)
   * `branch: {string}`  
