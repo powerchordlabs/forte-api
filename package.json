@@ -1,5 +1,6 @@
 {
   "name": "@powerchord/forte-api",
+  "verson": "0.0.0-semantically-released",
   "description": "A fluent wrapper for the Powerchord Forte REST API",
   "main": "./lib",
   "scripts": {
