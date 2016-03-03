@@ -42,23 +42,29 @@ function forteApi(credentials, scope, options) {
 			validateArgs('log', arguments) 
 			return client.post(ApiPaths.log, { data: { level, message, meta } })
 		},
+		experience: {
+			bootstrap(id){
+				validateArgs('entity_byID', arguments)
+				return client.get(ApiPaths.experience.bootstrap(id))
+			}
+		},
 		organizations: {
 			getMany(filter){
-				validateArgs('entity_getMany', arguments)
+				validateArgs('entity_byFilter', arguments)
 				return client.get(ApiPaths.organizations.getMany(), { params: filter })
 			},
 			getOne(id){
-				validateArgs('entity_getOne', arguments)
+				validateArgs('entity_byID', arguments)
 				return client.get(ApiPaths.organizations.getOne(id))
 			}
 		},
 		locations: {
 			getMany(filter){
-				validateArgs('entity_getMany', arguments)
+				validateArgs('entity_byFilter', arguments)
 				return client.get(ApiPaths.locations.getMany(scope), { params: filter })
 			},
 			getOne(id){
-				validateArgs('entity_getOne', arguments)
+				validateArgs('entity_byID', arguments)
 				return client.get(ApiPaths.locations.getOne(scope, id))
 			}
 		},
@@ -188,12 +194,12 @@ const validators = {
 			argumentError('callback must be a function.')
 		}
 	},
-	entity_getMany(filter) {
+	entity_byFilter(filter) {
 		if(isEmptyObject(filter)) {
 			argumentError('filter')
 		}
 	},
-	entity_getOne(id) {
+	entity_byID(id) {
 		if(isInvalidString(id)) {
 			argumentError('id')
 		}

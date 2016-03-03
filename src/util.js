@@ -22,6 +22,11 @@ query:		/composite
 
 export const ApiPaths = {
 	log: '/developer/log',
+	experience: {
+		bootstrap(id) {
+			return `/organizations/${id}/bootstrap`
+		}
+	},
 	organizations: {
 		getMany() {
 			return `/organizations/`

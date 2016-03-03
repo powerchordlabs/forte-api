@@ -254,6 +254,31 @@ describe('forteApi', () => {
 		})
 	})
 
+	describe('api.experience', () => {
+
+		describe('.bootstrap(id)', () => {
+
+			let invalidIDs = [null, undefined, {}, '']
+			invalidIDs.forEach((id) => {
+				it(`should throw for id '${JSON.stringify(id)}'`, () => {
+					assert.throws(() => { api.experience.bootstrap(id) }, InvalidArgumentError)
+				})
+			})
+
+			let validIDs = ['123', '456']
+			validIDs.forEach((id) => {
+				let expected = ApiPaths.experience.bootstrap(id)
+				it(`should build and GET uri: ${expected}'`, () => {
+					let getManyMock = mockapi.get(expected)
+
+					return api.experience.bootstrap(id).then(response => {
+						getManyMock.done()
+					})
+				})
+			})
+		})
+	})
+
 	describe('api.organizations', () => {
 
 		describe('.getMany(filter)', () => {
