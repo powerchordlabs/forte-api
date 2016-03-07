@@ -32,22 +32,6 @@ function authMiddleware(superagent, hostname, credentials){
 
 class Client {
 
-  formatResponse(response) {
-    let { statusCode, xhr, headers } = response
-
-    // normalize the different types of errors we may get into a unified res structure
-    // unfortunately this is needed to prevent 'undefined' errors when testing with nock
-    // if we can find a way to overcome the nock issue, let's get rid of this
-    let { body, text, statusMessage } = (response || { body:null, text: null, statusMessage: statusCode })
-
-    return {
-      status: statusCode,
-      statusText: statusMessage || xhr && xhr.statusText || '',
-      headers: headers || null,
-      data: body || text || null,
-    }
-  }
-
   formatUrl(baseUrl, path) {
     const adjustedPath = path[0] !== '/' ? '/' + path : path;
     return baseUrl + adjustedPath;
@@ -74,13 +58,11 @@ class Client {
 
         request.end((err, res) => {
           if(err){ debug(`client.${method} error: %o`, err) }
-            
-          let parsed = this.formatResponse(err ? err.response || err : res)
 
           // all succesful api responses have auth header
           onAuth && onAuth(err, err ? null : res.headers.authorization)
 
-          err ? reject(parsed) : resolve(parsed)
+          err ? reject(parsed) : resolve(res)
         });
       }));
   }

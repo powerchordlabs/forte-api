@@ -233,7 +233,7 @@ describe('forteApi', () => {
 
 		it('should post a message to the api', () => {
 			return api.log('trace', 'valid').then(response => {
-				let { data: { level, message, meta }, headers } = response
+				let { body: { level, message, meta }, headers } = response
 
 				assert.equal(headers.authorization, MOCK_AUTH_TOKEN)
 				assert.equal('trace', level)
@@ -244,7 +244,7 @@ describe('forteApi', () => {
 
 		it('should post a message and meta to the api', () => {
 			return api.log('trace', 'valid', { sample: 'data' }).then(response => {
-				let { data: { level, message, meta }, headers } = response
+				let { body: { level, message, meta }, headers } = response
 
 				assert.equal(headers.authorization, MOCK_AUTH_TOKEN)
 				assert.equal(level, 'trace')
