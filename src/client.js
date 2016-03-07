@@ -33,12 +33,12 @@ function authMiddleware(superagent, hostname, credentials){
 class Client {
 
   formatResponse(response) {
-    let { statusCode, res, xhr, headers } = response
+    let { statusCode, xhr, headers } = response
 
     // normalize the different types of errors we may get into a unified res structure
     // unfortunately this is needed to prevent 'undefined' errors when testing with nock
     // if we can find a way to overcome the nock issue, let's get rid of this
-    let { body, text, statusMessage } = (res || { body:null, text: null, statusMessage: statusCode })
+    let { body, text, statusMessage } = (response || { body:null, text: null, statusMessage: statusCode })
 
     return {
       status: statusCode,
