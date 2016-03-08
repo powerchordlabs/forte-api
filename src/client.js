@@ -62,7 +62,7 @@ class Client {
           // all succesful api responses have auth header
           onAuth && onAuth(err, err ? null : res.headers.authorization)
 
-          err ? reject(parsed) : resolve(res)
+          err ? reject(err) : resolve(res)
         });
       }));
   }
