@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
+    "extend-error": "0.0.2",
     "superagent": "^1.6.1"
   }
 }

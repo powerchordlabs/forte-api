@@ -92,13 +92,10 @@ function forteApi(credentials, scope, options) {
  */
 const LOG_LEVELS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 
-function argumentError(name) {
-	throw new InvalidArgumentError(name)
-}
-
 function validateArgs(method, args) {
-	// TODO, add NODE_ENV='production' check here so we can skip validation in production mode
-	validators[method].apply(null, args)
+	if(process.env.NODE_ENV !== 'production'){
+		validators[method].apply(null, args)
+	}
 }
 
 function isEmptyObject(obj){
@@ -113,22 +110,22 @@ const validators = {
 	createApi(credentials, scope, options) {
 		function verifyCredentials(credentials) {
 			if(!credentials){
-				argumentError('credentials')
+				throw new InvalidArgumentError('credentials')
 			}
 
 			if(credentials.bearerToken !== undefined) {
 				if(typeof credentials.bearerToken !== 'string'){
-					argumentError('credentials.bearerToken')
+					throw new InvalidArgumentError('credentials.bearerToken')
 				}
 				return
 			}
 
 			if(typeof credentials.privateKey !== 'string'){
-				argumentError('credentials.privateKey')
+				throw new InvalidArgumentError('credentials.privateKey')
 			}
 
 			if(typeof credentials.publicKey !== 'string'){
-				argumentError('credentials.publicKey')
+				throw new InvalidArgumentError('credentials.publicKey')
 			}
 		}
 
@@ -138,15 +135,15 @@ const validators = {
 			}
 			
 			if(typeof scope.hostname !== 'string' || scope.hostname === ''){
-				argumentError('scope.hostname')
+				throw new InvalidArgumentError('scope.hostname')
 			}
 
 			if(typeof scope.trunk !== 'string' || scope.trunk === ''){
-				argumentError('scope.trunk')
+				throw new InvalidArgumentError('scope.trunk')
 			}
 
 			if(scope.branch !== undefined && typeof scope.branch !== 'string' || scope.branch === ''){
-				argumentError('scope.branch')
+				throw new InvalidArgumentError('scope.branch')
 			}
 		}
 
@@ -155,11 +152,11 @@ const validators = {
 			if(options === undefined) return
 
 			if(options.url !== undefined && typeof options.url !== 'string') {
-				argumentError('options.url')
+				throw new InvalidArgumentError('options.url')
 			}
 
 			if(options.fingerPrintingEnabled !== undefined && typeof options.fingerPrintingEnabled !== 'boolean') {
-				argumentError('options.fingerPrintingEnabled')
+				throw new InvalidArgumentError('options.fingerPrintingEnabled')
 			}
 		}
 
@@ -174,55 +171,55 @@ const validators = {
 	},
 	log(level, message, meta) {
 		if(LOG_LEVELS.indexOf(level) === -1) {
-			argumentError('Log level "' + level + '" is invalid. Use one of: ' + LOG_LEVELS.join(', '))
+			throw new InvalidArgumentError('Log level "' + level + '" is invalid. Use one of: ' + LOG_LEVELS.join(', '))
 		}
 
 		if(typeof message !== 'string' || message.trim() === '') {
-			argumentError('Message "' + message + '" is invalid.')
+			throw new InvalidArgumentError('Message "' + message + '" is invalid.')
 		}
 
 		if(meta !== undefined && (meta === null || typeof meta !== 'object')){
-			argumentError('Meta "' + meta + '" is invalid.')
+			throw new InvalidArgumentError('Meta "' + meta + '" is invalid.')
 		}
 	},
 	on(name, callback) {
 		if(name !== 'auth') {
-			argumentError('"' + name + '" is not a supported event.')
+			throw new InvalidArgumentError('"' + name + '" is not a supported event.')
 		}
 
 		if(typeof callback !== 'function') {
-			argumentError('callback must be a function.')
+			throw new InvalidArgumentError('callback must be a function.')
 		}
 	},
 	entity_byFilter(filter) {
 		if(isEmptyObject(filter)) {
-			argumentError('filter')
+			throw new InvalidArgumentError('filter')
 		}
 	},
 	entity_byID(id) {
 		if(isInvalidString(id)) {
-			argumentError('id')
+			throw new InvalidArgumentError('id')
 		}
 	},
 	content_getMany(type, filter) {
 		if(isInvalidString(type)) {
-			argumentError('type')
+			throw new InvalidArgumentError('type')
 		}
 		if(isEmptyObject(filter)) {
-			argumentError('filter')
+			throw new InvalidArgumentError('filter')
 		}
 	},
 	content_getOne(type, id) {
 		if(isInvalidString(type)) {
-			argumentError('type')
+			throw new InvalidArgumentError('type')
 		}
 		if(isInvalidString(id)) {
-			argumentError('id')
+			throw new InvalidArgumentError('id')
 		}
 	},
 	composite_query(query) {
 		if(isEmptyObject(query)) {
-			argumentError('query')
+			throw new InvalidArgumentError('query')
 		}
 	}
 }
