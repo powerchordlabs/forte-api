@@ -59,7 +59,7 @@ class Client {
         request.end((err, res) => {
           if(err){ debug(`client.${method} error: %o`, err) }
 
-          // all succesful api responses have auth header <- NOT TRUE
+          // all succesful api responses have auth header <- NOT TRUE on token auth
           // all succesful CHECKSUM api responses have auth header, keep the bearerToken
           onAuth && onAuth(err, err ? null : (credentials.bearerToken ? credentials.bearerToken : res.headers.authorization));
 
