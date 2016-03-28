@@ -15,10 +15,10 @@ function authMiddleware(superagent, hostname, credentials){
       let FQDN = hostname
       let checkSumData = [credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join(':')
       debug('checkSumData %s', checkSumData)
-
+      
       let hash = crypto.createHash('sha256').update(checkSumData).digest('hex')
       debug('hash %s', hash)
-
+      
       authHeader = `Checksum ${[credentials.publicKey, UTCTimestamp, hash, FQDN].join(':')}`
     }
 
@@ -59,9 +59,8 @@ class Client {
         request.end((err, res) => {
           if(err){ debug(`client.${method} error: %o`, err) }
 
-          // all succesful api responses have auth header <- NOT TRUE
-          // all succesful CHECKSUM api responses have auth header, keep the bearerToken
-          onAuth && onAuth(err, err ? null : (credentials.bearerToken ? credentials.bearerToken : res.headers.authorization));
+          // all succesful api responses have auth header
+          onAuth && onAuth(err, err ? null : res.headers.authorization)
 
           err ? reject(err) : resolve(res)
         });
