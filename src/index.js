@@ -247,4 +247,4 @@ var validators = {
 			throw new _util.InvalidArgumentError('query');
 		}
 	}
-};
+}
