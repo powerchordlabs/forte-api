@@ -45,6 +45,9 @@ var ApiPaths = exports.ApiPaths = {
 		},
 		getOne: function getOne(id) {
 			return '/organizations/' + id;
+		},
+		getOneByHostname: function getOneByHostname(hostname) {
+			return '/organizations?hostname=' + hostname;
 		}
 	},
 	locations: {

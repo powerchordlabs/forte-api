@@ -72,6 +72,10 @@ function forteApi(credentials, scope, options) {
 			getOne: function getOne(id) {
 				validateArgs('entity_byID', arguments);
 				return client.get(_util.ApiPaths.organizations.getOne(id));
+			},
+			getOneByHostname: function getOneByHostname(hostname) {
+				validateArgs('entity_byHostname', arguments);
+				return client.get(_util.ApiPaths.organizations.getOneByHostname(hostname));
 			}
 		},
 		locations: {
