@@ -1,5 +1,13 @@
-import { stringify } from 'querystring'
-require('extend-error')
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.InvalidArgumentError = exports.ApiPaths = undefined;
+
+var _querystring = require('querystring');
+
+require('extend-error');
 
 /*
 ForteApi Routes
@@ -21,42 +29,45 @@ query:		/composite
 
 */
 
-export const ApiPaths = {
+var ApiPaths = exports.ApiPaths = {
 	log: '/developer/log',
 	experience: {
-		bootstrap(id) {
+		session: function session() {
+			return `/session/check`
+		},
+		bootstrap: function bootstrap(id) {
 			return `/forte/bootstrap/${id}`
 		}
 	},
 	organizations: {
-		getMany() {
-			return `/organizations/`
+		getMany: function getMany() {
+			return '/organizations/';
 		},
-		getOne(id) {
-			return `/organizations/${id}`
+		getOne: function getOne(id) {
+			return '/organizations/' + id;
 		}
 	},
 	locations: {
-		getMany(scope) {
-			return `/forte/organizations/${scope.trunk}/${scope.branch}/locations/`
+		getMany: function getMany(scope) {
+			return '/forte/organizations/' + scope.trunk + '/' + scope.branch + '/locations/';
 		},
-		getOne(scope, id) {
-			return `/forte/organizations/${scope.trunk}/${scope.branch}/locations/${id}`
+		getOne: function getOne(scope, id) {
+			return '/forte/organizations/' + scope.trunk + '/' + scope.branch + '/locations/' + id;
 		}
 	},
 	content: {
-		getMany(scope, type) {
-			return `/forte/${scope.trunk}/${scope.branch}/content/${type}/`
+		getMany: function getMany(scope, type) {
+			return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/';
 		},
-		getOne(scope, type, id) {
-			return `/forte/${scope.trunk}/${scope.branch}/content/${type}/${id}`
+		getOne: function getOne(scope, type, id) {
+			return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/' + id;
 		}
 	},
 	composite: {
-		query(scope) {
-			return `/forte/composite/${scope.trunk}/${scope.branch}/`
+		query: function query(scope) {
+			return '/forte/composite/' + scope.trunk + '/' + scope.branch + '/';
 		}
 	}
-}
+};
 
-export const InvalidArgumentError = Error.extend('InvalidArgument');
+var InvalidArgumentError = exports.InvalidArgumentError = Error.extend('InvalidArgument');
