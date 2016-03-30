@@ -221,6 +221,11 @@ var validators = {
 			throw new _util.InvalidArgumentError('id');
 		}
 	},
+	entity_byHostname: function entity_byHostname(hostname) {
+		if (isInvalidString(hostname)) {
+			throw new _util.InvalidArgumentError('hostname');
+		}
+	},
 	content_getMany: function content_getMany(type, filter) {
 		if (isInvalidString(type)) {
 			throw new _util.InvalidArgumentError('type');
