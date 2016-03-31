@@ -96,6 +96,11 @@ function forteApi(credentials, scope, options) {
 			getOne: function getOne(type, id) {
 				validateArgs('content_getOne', arguments);
 				return client.get(_util.ApiPaths.content.getOne(scope, type, id));
+			},
+			forms: {
+				putDocument: function putDocument(collection, data) {
+					return client.put(_util.ApiPaths.content.forms.putDocument(scope, {collection:collection, data:data}));
+				}
 			}
 		},
 		composite: {

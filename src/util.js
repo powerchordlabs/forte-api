@@ -64,6 +64,11 @@ var ApiPaths = exports.ApiPaths = {
 		},
 		getOne: function getOne(scope, type, id) {
 			return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/' + id;
+		},
+		forms: {
+			putDocument: function putDocument(scope, data) {
+				return '/forte/organizations/' + scope.trunk + '/content/forms/documents/';
+			}
 		}
 	},
 	composite: {
@@ -71,6 +76,6 @@ var ApiPaths = exports.ApiPaths = {
 			return '/forte/composite/' + scope.trunk + '/' + scope.branch + '/';
 		}
 	}
-};
+}
 
 var InvalidArgumentError = exports.InvalidArgumentError = Error.extend('InvalidArgument');
