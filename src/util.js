@@ -66,7 +66,7 @@ var ApiPaths = exports.ApiPaths = {
 			return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/' + id;
 		},
 		forms: {
-			putFormDocument: function putFormDocument(scope, data) {
+			putDocument: function putDocument(scope, data) {
 				return '/forte/organizations/' + scope.trunk + '/content/forms/documents';
 			}
 		}

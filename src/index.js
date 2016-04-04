@@ -114,8 +114,8 @@ function forteApi(credentials, scope, options) {
 				return client.get(_util.ApiPaths.content.getOne(scope, type, id));
 			},
 			forms: {
-				putFormDocument: function putFormDocument(collection, data) {
-					return client.put(_util.ApiPaths.content.forms.putFormDocument(scope),{data:{ collection: collection, data: data }});
+				putDocument: function putDocument(collection, data) {
+					return client.put(_util.ApiPaths.content.forms.putDocument(scope),{data:{ collection: collection, data: data }});
 				}
 			}
 		},
