@@ -1,8 +1,22 @@
-'use strict'
+'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var _extends = Object.assign || function (target) {
+	for (var i = 1; i < arguments.length; i++) {
+		var source = arguments[i];for (var key in source) {
+			if (Object.prototype.hasOwnProperty.call(source, key)) {
+				target[key] = source[key];
+			}
+		}
+	}return target;
+};
 
 var _client = require('./client');
 
@@ -10,7 +24,9 @@ var _client2 = _interopRequireDefault(_client);
 
 var _util = require('./util');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+	return obj && obj.__esModule ? obj : { default: obj };
+}
 
 exports = module.exports = createApi;
 
@@ -98,8 +114,8 @@ function forteApi(credentials, scope, options) {
 				return client.get(_util.ApiPaths.content.getOne(scope, type, id));
 			},
 			forms: {
-				putDocument: function putDocument(collection, data) {
-					return client.put(_util.ApiPaths.content.forms.putDocument(scope, {collection:collection, data:data}));
+				putFormDocument: function putFormDocument(collection, data) {
+					return client.put(_util.ApiPaths.content.forms.putFormDocument(scope),{data:{ collection: collection, data: data }});
 				}
 			}
 		},
@@ -252,4 +268,4 @@ var validators = {
 			throw new _util.InvalidArgumentError('query');
 		}
 	}
-}
+};

@@ -33,10 +33,10 @@ var ApiPaths = exports.ApiPaths = {
 	log: '/developer/log',
 	experience: {
 		session: function session() {
-			return `/session/check`
+			return '/session/check';
 		},
 		bootstrap: function bootstrap(id) {
-			return `/forte/bootstrap/${id}`
+			return '/forte/bootstrap/' + id;
 		}
 	},
 	organizations: {
@@ -66,8 +66,8 @@ var ApiPaths = exports.ApiPaths = {
 			return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/' + id;
 		},
 		forms: {
-			putDocument: function putDocument(scope, data) {
-				return '/forte/organizations/' + scope.trunk + '/content/forms/documents/';
+			putFormDocument: function putFormDocument(scope, data) {
+				return '/forte/organizations/' + scope.trunk + '/content/forms/documents';
 			}
 		}
 	},
@@ -76,6 +76,6 @@ var ApiPaths = exports.ApiPaths = {
 			return '/forte/composite/' + scope.trunk + '/' + scope.branch + '/';
 		}
 	}
-}
+};
 
 var InvalidArgumentError = exports.InvalidArgumentError = Error.extend('InvalidArgument');
