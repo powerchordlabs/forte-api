@@ -1,6 +1,12 @@
 'use strict';
 
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof3 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _typeof2 = typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof3(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof3(obj);
+};
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
 	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
@@ -115,8 +121,17 @@ function forteApi(credentials, scope, options) {
 			},
 			forms: {
 				putDocument: function putDocument(collection, data) {
-					return client.put(_util.ApiPaths.content.forms.putDocument(scope),{data:{ collection: collection, data: data }});
+					return client.put(_util.ApiPaths.content.forms.putDocument(scope), { data: { collection: collection, data: data } });
 				}
+			}
+		},
+		metrics: {
+			putPageview: function putPageview(lifecycle) {
+				const data = {userAgent: navigator.userAgent,
+											ipAddress: lifecycle.connection.remoteAddress,
+											URL: lifecycle.scope.hostname+window.location.pathname,
+											httpReferrer: document.referrer}
+				return client.put(_util.ApiPaths.metrics.putMetric(scope), { data: { type: 'pageview', data: data } });
 			}
 		},
 		composite: {

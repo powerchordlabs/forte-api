@@ -71,6 +71,11 @@ var ApiPaths = exports.ApiPaths = {
 			}
 		}
 	},
+	metrics: {
+		putMetric: function putMetric(scope) {
+			return '/forte/metrics/organizations/record/' + scope.trunk + '/' + scope.branch;
+		}
+	},
 	composite: {
 		query: function query(scope) {
 			return '/forte/composite/' + scope.trunk + '/' + scope.branch + '/';
