@@ -471,6 +471,45 @@ describe('forteApi', () => {
 			})
 		})
 	})
+
+	describe('api.metrics', () => {
+
+		describe('.putPageview(data)', () => {
+
+			let invalidDatum = [null, undefined, {}, '', () => {}]
+			invalidDatum.forEach((data) => {
+				it(`should throw for data '${JSON.stringify(data)}'`, () => {
+					assert.throws(() => { api.metrics.putPageview(data) }, InvalidArgumentError)
+				})
+			})
+
+			let validDatum = [
+				{
+			    	userAgent: 'userAgent',
+			    	ipAddress: 'remoteAddress',
+			    	URL: 'url',
+			    	httpReferrer: 'document.referrer'
+			  	},
+			  	{
+			    	anything: 'can',
+			    	go: 'here',
+			    	there: 'is',
+			    	no: 'data validation'
+			  	}
+			]
+
+			validDatum.forEach((data) => {
+				let expected = expectedUri(ApiPaths.metrics.putMetric(validTrunkAndBranchScope))
+				it(`should PUT uri: ${expected}`, () => {
+					let getMetricMock = mockapi.put(expected, 200, { type: 'pageview', data })
+
+					return api.metrics.putPageview(data).then(response => {
+						getMetricMock.done()
+					})
+				})
+			})
+		})
+	})
 })
 
 // only used for assert output, not actual test

@@ -126,11 +126,8 @@ function forteApi(credentials, scope, options) {
 			}
 		},
 		metrics: {
-			putPageview: function putPageview(lifecycle) {
-				const data = {userAgent: navigator.userAgent,
-											ipAddress: lifecycle.connection.remoteAddress,
-											URL: lifecycle.scope.hostname+window.location.pathname,
-											httpReferrer: document.referrer}
+			putPageview: function putPageview(data) {
+				validateArgs('metrics_pageview', arguments);
 				return client.put(_util.ApiPaths.metrics.putMetric(scope), { data: { type: 'pageview', data: data } });
 			}
 		},
@@ -281,6 +278,11 @@ var validators = {
 	composite_query: function composite_query(query) {
 		if (isEmptyObject(query)) {
 			throw new _util.InvalidArgumentError('query');
+		}
+	},
+	metrics_pageview: function metrics_pageview(data) {
+		if (isEmptyObject(data)) {
+			throw new _util.InvalidArgumentError('data');
 		}
 	}
 };
