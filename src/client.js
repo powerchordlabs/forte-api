@@ -1,28 +1,28 @@
 import crypto from 'crypto'
-import superagent from 'superagent';
+import superagent from 'superagent'
 const debug = require('debug')('forte-api:client')
 
-const METHODS = ['get', 'post', 'put', 'patch', 'del'];
+const METHODS = ['get', 'post', 'put', 'patch', 'del']
 
-function authMiddleware(superagent, hostname, credentials){
-  superagent.Request.prototype.sign = function(){
-    var authHeader = ''
+function authMiddleware(superagent, hostname, credentials) {
+  superagent.Request.prototype.sign = function() {
+    let authHeader = ''
 
     if (credentials.bearerToken) {
       authHeader = `${credentials.bearerToken}`
     } else {
-      let UTCTimestamp = Math.floor((new Date()).getTime() / 1000)//new Date().getTime()
-      let FQDN = hostname
-      let checkSumData = [credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join(':')
+      const UTCTimestamp = Math.floor((new Date()).getTime() / 1000)
+      const FQDN = hostname
+      const checkSumData = [credentials.privateKey, credentials.publicKey, UTCTimestamp, FQDN].join(':')
       debug('checkSumData %s', checkSumData)
 
-      let hash = crypto.createHash('sha256').update(checkSumData).digest('hex')
+      const hash = crypto.createHash('sha256').update(checkSumData).digest('hex')
       debug('hash %s', hash)
 
       authHeader = `Checksum ${[credentials.publicKey, UTCTimestamp, hash, FQDN].join(':')}`
     }
 
-    this.set('Authorization', authHeader);
+    this.set('Authorization', authHeader)
 
     return this
   }
@@ -33,23 +33,23 @@ function authMiddleware(superagent, hostname, credentials){
 class Client {
 
   formatUrl(baseUrl, path) {
-    const adjustedPath = path[0] !== '/' ? '/' + path : path;
-    return baseUrl + adjustedPath;
+    const adjustedPath = path[0] !== '/' ? '/' + path : path
+    return baseUrl + adjustedPath
   }
 
   constructor(hostname, credentials, baseUrl, onAuth) {
-    var agent = authMiddleware(superagent, hostname, credentials)
+    const agent = authMiddleware(superagent, hostname, credentials)
 
     METHODS.forEach((method) =>
       this[method] = (path, { params, data, headers } = {}) => new Promise((resolve, reject) => {
-        const request = agent[method](this.formatUrl(baseUrl, path)).sign();
+        const request = agent[method](this.formatUrl(baseUrl, path)).sign()
 
         if (params) {
-          request.query(params);
+          request.query(params)
         }
 
         if (data) {
-          request.send(data);
+          request.send(data)
         }
 
         if (headers) {
@@ -57,18 +57,18 @@ class Client {
         }
 
         request.end((err, res) => {
-          if(err){ debug(`client.${method} error: %o`, err) }
+          if(err) { debug(`client.${method} error: %o`, err) }
 
           // all succesful api responses have auth header <- NOT TRUE on token auth
           // all succesful CHECKSUM api responses have auth header, keep the bearerToken if not passed
-          onAuth && onAuth(err, err ? null : (res.headers.authorization ? res.headers.authorization : credentials.bearerToken));
+          onAuth && onAuth(err, err ? null : (res.headers.authorization ? res.headers.authorization : credentials.bearerToken))
 
           err ? reject(err) : resolve(res)
-        });
-      }));
+        })
+      }))
   }
 }
 
-const ApiClient = Client;
+const ApiClient = Client
 
-export default ApiClient;
+export default ApiClient

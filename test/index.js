@@ -14,7 +14,7 @@ const DEFAULT_OPTIONS = {
 describe('forteApi', () => {
 	function apiFactory(credentials, scope, options){
 		let opts = {...DEFAULT_OPTIONS, ...options}
-		return () => { 
+		return () => {
 			return forteApi(credentials, scope, opts)
 		}
 	}
@@ -71,7 +71,7 @@ describe('forteApi', () => {
 			{ hostname: 'dealer.client.us', trunk: null },
 			{ hostname: 'dealer.client.us', trunk: '' }
 		]
-		invalidTrunkScopes.forEach(invalid =>{		
+		invalidTrunkScopes.forEach(invalid =>{
 			it(`should throw for trunk scope ${JSON.stringify(invalid)}`, () => {
 				assert.throws(apiFactory(validTokenCreds, invalid), InvalidArgumentError)
 			})
@@ -91,7 +91,7 @@ describe('forteApi', () => {
 		]
 		invalidOptions.forEach(options => {
 			it(`should throw for options ${JSON.stringify(options)}`, () => {
-				assert.throws(apiFactory(validTokenCreds, validTrunkScope, options), InvalidArgumentError)	
+				assert.throws(apiFactory(validTokenCreds, validTrunkScope, options), InvalidArgumentError)
 			})
 		})
 
@@ -103,14 +103,14 @@ describe('forteApi', () => {
 		]
 		validOptions.forEach(options => {
 			it(`should NOT throw for options ${JSON.stringify(options)}`, () => {
-				assert.doesNotThrow(apiFactory(validTokenCreds, validTrunkScope, options))	
+				assert.doesNotThrow(apiFactory(validTokenCreds, validTrunkScope, options))
 			})
 		})
 	})
 
 	describe('.withBranch(id)', () => {
 		let branchApi
-		
+
 		beforeEach(() => {
 			branchApi = api.withBranch('branchid')
 		})
@@ -134,7 +134,7 @@ describe('forteApi', () => {
 	})
 
 	describe('.getScope()', () => {
-		
+
 		it('should return the api scope', () => {
 			assert.deepEqual(api.getScope(), validTrunkAndBranchScope)
 		})
@@ -208,7 +208,7 @@ describe('forteApi', () => {
 
 		it('should throw if message is invalid', () => {
 			let invalidMessages = [
-			 	undefined, 
+			 	undefined,
 			 	null,
 			 	'',
 			 	{},
@@ -444,16 +444,16 @@ describe('forteApi', () => {
 			})
 
 			let validQueries = [
-				{ 
-					"screen": { 
-					"tenant": { 
-						"_resourceDefined": true, 
-						"_resource": "tenants", 
-						"_paramsRequested": true, 
-						"_params": { 
-							"activeContext": true 
-						}, 
-						"_singular": true 
+				{
+					"screen": {
+					"tenant": {
+						"_resourceDefined": true,
+						"_resource": "tenants",
+						"_paramsRequested": true,
+						"_params": {
+							"activeContext": true
+						},
+						"_singular": true
 					}
 					}
 				}
