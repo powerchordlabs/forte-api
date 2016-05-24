@@ -508,6 +508,69 @@ describe('forteApi', () => {
       })
     })
   })
+
+  describe('api.cart', () => {
+    const cartBaseUri = ApiPaths.cart(validTrunkAndBranchScope)
+    const mockBody = { mock: 'data' }
+    const tests = [
+      {
+        name: '.get()',
+        url: cartBaseUri+'/',
+        apiCall: () => api.cart.get(),
+        mock: url => mockapi.get(url, 200)
+      },
+      {
+        name: '.post()',
+        url: cartBaseUri+'/',
+        apiCall: () => api.cart.post(mockBody),
+        mock: url => mockapi.post(url, 200, mockBody)
+      },
+      {
+        name: '.id(1).get()',
+        url: `${cartBaseUri}/1`,
+        apiCall: () => api.cart.id(1).get(),
+        mock: url => mockapi.get(url, 200)
+      },
+      {
+        name: '.id(1).items.post()',
+        url: `${cartBaseUri}/1/items/`,
+        apiCall: () => api.cart.id(1).items.post(mockBody),
+        mock: url => mockapi.post(url, 200, mockBody)
+      },
+      {
+        name: '.id(1).items.id(2).patch()',
+        url: `${cartBaseUri}/1/items/2`,
+        apiCall: () => api.cart.id(1).items.id(2).patch(mockBody),
+        mock: url => mockapi.patch(url, 200, mockBody)
+      }
+    ]
+
+    tests.forEach(t => {
+      describe(`${t.name}`, () => {
+        it(`should request url ${t.url}`, () => {
+          const mock = t.mock(t.url)
+          return t.apiCall().then(() => {
+            mock.done()
+          })
+        })
+      })
+    })
+
+    /*
+  cart.get()
+  cart.post({x:1})
+  cart.id(1).get()
+  cart.id(1).items.post({x:1})
+  cart.id(1).items.id(2).patch({x:1})
+cart.id(1).contacts.post({x:1})
+cart.id(1).contacts.id(2).patch({x:1})
+cart.id(1).contacts.id(2).delete()
+cart.id(1).billTo.patch({x:1})
+cart.id(1).shipTo.patch({x:1})
+cart.id(1).confirmation.get()
+cart.id(1).checkout.post({x:1})
+    */
+  })
 })
 
 // only used for assert output, not actual test

@@ -127,7 +127,7 @@ function forteApi(credentials, scope, options) {
           },
           contacts: {
             post: data => {
-              return client.patch(ApiPaths.cart(scope) + `/${cartId}/contacts/`, { data })
+              return client.post(ApiPaths.cart(scope) + `/${cartId}/contacts/`, { data })
             },
             id: contactId => {
               return {
