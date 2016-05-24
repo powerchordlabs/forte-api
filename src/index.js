@@ -100,6 +100,68 @@ function forteApi(credentials, scope, options) {
         validateArgs('composite_query', arguments)
         return client.post(ApiPaths.composite.query(scope), { data: query })
       }
+    },
+    cart: {
+      get: () => {
+        return client.get(ApiPaths.cart(scope) + '/')
+      },
+      post: data => {
+        return client.post(ApiPaths.cart(scope) + '/', { data })
+      },
+      id: cartId => {
+        return {
+          get: () => {
+            return client.get(ApiPaths.cart(scope) + `/${cartId}`)
+          },
+          items: {
+            post: data => {
+              return client.post(ApiPaths.cart(scope) + `/${cartId}/items/`, { data })
+            },
+            id: itemId => {
+              return {
+                patch: data => {
+                  return client.patch(ApiPaths.cart(scope) + `/${cartId}/items/${itemId}`, { data })
+                }
+              }
+            }
+          },
+          contacts: {
+            post: data => {
+              return client.patch(ApiPaths.cart(scope) + `/${cartId}/contacts/`, { data })
+            },
+            id: contactId => {
+              return {
+                delete: data => {
+                  return client.delete(ApiPaths.cart(scope) + `/${cartId}/contacts/${contactId}`, { data })
+                },
+                patch: data => {
+                  return client.patch(ApiPaths.cart(scope) + `/${cartId}/contacts/${contactId}`, { data })
+                }
+              }
+            }
+          },
+          billTo: {
+            patch: data => {
+              return client.patch(ApiPaths.cart(scope) + `/${cartId}/billTo`, { data })
+            }
+          },
+          shipTo: {
+            patch: data => {
+              return client.patch(ApiPaths.cart(scope) + `/${cartId}/shipTo`, { data })
+            }
+          },
+          confirmation: {
+            get: () => {
+              return client.get(ApiPaths.cart(scope) + `/${cartId}/confirmation`)
+            }
+          },
+          checkout: {
+            post: data => {
+              return client.post(ApiPaths.cart(scope) + `/${cartId}/checkout`, { data })
+            }
+          }
+        }
+      }
     }
   }
 }
