@@ -10,15 +10,15 @@ ForteAPI is a wrapper around the Powerchord Forte REST API that allows you to fo
 
 ## Features
 
-* **Simple API**  
+* **Simple API**
 Simplifies REST API access so you can focus on data and not HTTP
-* **Semi-Automatic token auth**  
+* **Semi-Automatic token auth**
 You simply provide secret keys, or a pre-existing token and ForteApi does the rest
-* **Client Fingerprinting**  
+* **Client Fingerprinting**
 By default ForteApi will perform a browser fingerprint on the client via a non-blocking background process, i.e. WebWorker. This can be disabled via options if legal requirements dictate.
 
 # Documentation
-* [Quick Start](#quick-start)  
+* [Quick Start](#quick-start)
 * [API](#api)
     * [Constructor](#constructor)
       * [Organization Scopes](#organization-scopes)
@@ -47,7 +47,7 @@ CLIENT_GLOBALS = {
 }
 
 let creds = {
-  apiPrivateKey: 'PRIVATEKEY', 
+  apiPrivateKey: 'PRIVATEKEY',
   apiPublicKey: 'PUBLICKEY',
 }
 
@@ -89,8 +89,8 @@ let results = api.composite
     .query({...})
     .then(composed =>
         return api.location.get(id)
-          .then(location => return { 
-            composed.data, 
+          .then(location => return {
+            composed.data,
             location.data
           })
     )
@@ -113,36 +113,36 @@ let scope = {
 }
 
 // defaults
-let api = ForteApi(credentials, scope); 
+let api = ForteApi(credentials, scope);
 
 // override api options
-let api = ForteApi(credentials, scope, options); 
+let api = ForteApi(credentials, scope, options);
 ```
 
 ###### args
-* `credentials: {Object}`  
-Used to manage Authentication for api requests. 
-    * `bearerToken: {string}`  
-    Used by default if not null. The token will be added as an `Authorization` header for all endpoint requests. 
-    * `privateKey: {string}`, `publicKey: {string}` **server-side only**  
+* `credentials: {Object}`
+Used to manage Authentication for api requests.
+    * `bearerToken: {string}`
+    Used by default if not null. The token will be added as an `Authorization` header for all endpoint requests.
+    * `privateKey: {string}`, `publicKey: {string}` **server-side only**
     If `bearerToken` is null, an attempt will be made to use the `publicKey` and `privateKey` fields to generate a bearerToken for you. You can use the `on('auth', cb)` handler to subscribe to the 'auth' event and capture the bearerToken for later use, e.g. injecting the token in a client-side global.
-* `scope: {Object}`  
-  * `hostname: {string}`  
+* `scope: {Object}`
+  * `hostname: {string}`
   Sets the hostname scope for all requests, this is typically the TLD for your XPerience.
-  * `trunk: {string}`  
+  * `trunk: {string}`
   Sets the trunk scope for all requests. See [Organization Scopes](#organization-scopes)
-  * `branch: {string}`  
+  * `branch: {string}`
   Optional: sets the branch scope for all requests. Note, that an error will be thrown if `branch` is null when accessing endpoints that require it. See [Organization Scopes](#organization-scopes)
-* `options: {Object}`  
-    * `url: {string}`  
-    `default: https://api.powerchord.io`  
-    The base Api url.  
-    * `fingerPrintingEnabled: {boolean}` **client-side only**  
-    `default: true`  
+* `options: {Object}`
+    * `url: {string}`
+    `default: https://api.powerchord.io`
+    The base Api url.
+    * `fingerPrintingEnabled: {boolean}` **client-side only**
+    `default: true`
     If true, performs a browser fingerprint, once per session, via a non-blocking background process, i.e. WebWorker.
 
 ### Organization Scopes
-All api requests require at least a `trunk` scope and most also require a `branch` scope to be able to access your data. 
+All api requests require at least a `trunk` scope and most also require a `branch` scope to be able to access your data.
 
 The [constructor](#constructor) requires a `scope.trunk` param, but for requests requiring `branch` scope you can also use `api.withBranch()`. This is particularly useful on the server side, where you may have non-branch api calls during bootstrapping, as well as branch scoped calls during individual page requests.
 
@@ -171,7 +171,7 @@ app.get('*', (req, res, next) => {
 A convenience method that creates a new api scoped to the specified `ID`. All configuration is replicated from the original api instance.
 
 ###### args:
-* `ID: {string}`  
+* `ID: {string}`
 The identifier of the `branch` that future request should be scoped to.
 
 ```js
@@ -191,9 +191,9 @@ var api = ForteApi(creds, scope)
 Returns the scope of the api.
 
 ###### result:
-* `trunk: {string}`  
+* `trunk: {string}`
 The trunk ID of the scope.
-* `branch: {string|null}`  
+* `branch: {string|null}`
 The branch ID of the scope. Since only `trunk` is required, it is possible for the branch to be null if the api has not been given a branch scope.
 
 ### Events
@@ -234,13 +234,13 @@ api.organizations.getOne('orgid').then(
 ##### Responses
 All Endpoints return promises that have the following response signature for both `success/error` handlers:
 
-* `data: {string|Object}`  
+* `data: {string|Object}`
 The deserialized response body.
-* `status: {number}`  
+* `status: {number}`
 HTTP status code of the response.
-* `statusText: {string}`  
+* `statusText: {string}`
 HTTP status text of the response.
-* `headers: {Object}`  
+* `headers: {Object}`
 HTTP headers of the response.
 
 #### Organizations
@@ -248,7 +248,7 @@ HTTP headers of the response.
 Returns an array of organization objects matching the `filter` option(s).
 
 ###### args:
-* `filter: {Object}`  
+* `filter: {Object}`
 A json object that is used to filter results from the api.
 
 ```js
@@ -258,11 +258,11 @@ api.organizations.getMany({status: 'active'}).then((response) => {
 })
 ```
 
-##### api.organizations.getOne(id): {organization}  
+##### api.organizations.getOne(id): {organization}
 Returns one organization.
 
 ###### args:
-* `id: {string}`  
+* `id: {string}`
 The id of the organization to get.
 
 ```js
@@ -276,7 +276,7 @@ api.organizations.getOne('1').then((response) => {
 Returns an array of location objects matching the `filter` option(s).
 
 ###### args:
-* `filter: {Object}`  
+* `filter: {Object}`
 A json object that is used to filter results from the api.
 
 ```js
@@ -286,11 +286,11 @@ api.locations.getMany({status: 'active'}).then((response) => {
 })
 ```
 
-##### api.locations.getOne(id): {location}  
+##### api.locations.getOne(id): {location}
 Returns one location.
 
 ###### args:
-* `id: {string}`  
+* `id: {string}`
 The id of the location to get.
 
 ```js
@@ -304,9 +304,9 @@ api.locations.getOne('1').then((response) => {
 Returns an array of content objects matching the `type` and `filter` option(s).
 
 ###### args:
-* `type: {string}`  
+* `type: {string}`
 The type of content to get.
-* `filter: {Object}`  
+* `filter: {Object}`
 A json object that is used to filter results from the api.
 
 ```js
@@ -316,13 +316,13 @@ api.content.getMany('PRODUCT', {status: 'active'}).then((response) => {
 })
 ```
 
-##### api.content.getOne(type, id): {content}  
+##### api.content.getOne(type, id): {content}
 Returns one content object.
 
 ###### args:
-* `type: {string}`  
+* `type: {string}`
 The type of content to get.
-* `id: {string}`  
+* `id: {string}`
 The id of the content to get.
 
 ```js
@@ -337,44 +337,53 @@ api.locations.getOne('PRODUCT', '1').then((response) => {
 Writes events to the platform API.
 
 ###### args:
-* `events: {Object}`  
+* `events: {Object}`
 A json object containing one or more [supported events](#supported-analytics-events).
 
 
 ``` js
-api.analytics.track({ 
+api.analytics.track({
     'pageview': {
-        title: 'Hello World', 
+        title: 'Hello World',
         location: 'http://my.site.com/welcome?u=me'
     }
 })
 ```
 
-###### Supported Analytics Events  
+###### Supported Analytics Events
 
-##### pageview  
-* `title: {string}`  
+##### pageview
+* `title: {string}`
 The title of the page.
-* `location: {string}`   
+* `location: {string}`
 The full url of the page excluding the hash.
 
 ``` js
-api.analytics.track({ 
+api.analytics.track({
     'pageview': {
-        title: 'Hello World', 
+        title: 'Hello World',
         location: 'http://my.site.com/welcome?u=me'
     }
 })
 ```
 
 #### Composite
-*advanced topic*  
+*advanced topic*
 
 ##### api.composite.query(query)
 Composite is an endpoint that takes a multi-entity structured query and returns all entities via one network call. While you are free to use this method directly, the mechanics of composite are complicated. Using [forte-conductor](https://github.com/powerchordinc/forte-conductor) is recommended.
 
 ###### args:
-* `query: {Object}`  
+* `query: {Object}`
+
+
+#### Carts
+
+The carts API follows a RESTful control flow pattern base on the Powerchord Platform API.
+
+For example, given an API request of `POST /carts/123/items/` the corresponding forte-api call would be `carts.id(123).post({...})`
+
+For more detail regarding Paltform API see: [Platform API docs](https://api.powerchord.io/docs)
 
 
 [build-badge]: https://img.shields.io/travis/powerchordlabs/forte-api/master.svg?style=flat-square
