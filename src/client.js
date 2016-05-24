@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import superagent from 'superagent'
 const debug = require('debug')('forte-api:client')
 
-const METHODS = ['get', 'post', 'put', 'patch', 'del']
+const METHODS = ['get', 'post', 'put', 'patch', 'delete']
 
 function authMiddleware(superagent, hostname, credentials) {
   superagent.Request.prototype.sign = function() {

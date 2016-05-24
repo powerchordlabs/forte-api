@@ -511,65 +511,104 @@ describe('forteApi', () => {
 
   describe('api.cart', () => {
     const cartBaseUri = ApiPaths.cart(validTrunkAndBranchScope)
-    const mockBody = { mock: 'data' }
+    const mockRequestBody = { mock: 'data' }
     const tests = [
       {
         name: '.get()',
-        url: cartBaseUri+'/',
-        apiCall: () => api.cart.get(),
-        mock: url => mockapi.get(url, 200)
+        url: cartBaseUri,
+        verb: 'GET',
+        request: () => api.cart.get()
       },
       {
-        name: '.post()',
+        name: '.post(...)',
         url: cartBaseUri+'/',
-        apiCall: () => api.cart.post(mockBody),
-        mock: url => mockapi.post(url, 200, mockBody)
+        verb: 'POST',
+        body: mockRequestBody,
+        request: () => api.cart.post(mockRequestBody)
       },
       {
         name: '.id(1).get()',
         url: `${cartBaseUri}/1`,
-        apiCall: () => api.cart.id(1).get(),
-        mock: url => mockapi.get(url, 200)
+        verb: 'GET',
+        request: () => api.cart.id(1).get()
       },
       {
-        name: '.id(1).items.post()',
+        name: '.id(1).items.post(...)',
         url: `${cartBaseUri}/1/items/`,
-        apiCall: () => api.cart.id(1).items.post(mockBody),
-        mock: url => mockapi.post(url, 200, mockBody)
+        verb: 'POST',
+        body: mockRequestBody,
+        request: () => api.cart.id(1).items.post(mockRequestBody)
       },
       {
-        name: '.id(1).items.id(2).patch()',
+        name: '.id(1).items.id(2).patch(...)',
         url: `${cartBaseUri}/1/items/2`,
-        apiCall: () => api.cart.id(1).items.id(2).patch(mockBody),
-        mock: url => mockapi.patch(url, 200, mockBody)
+        verb: 'PATCH',
+        body: mockRequestBody,
+        request: () => api.cart.id(1).items.id(2).patch(mockRequestBody)
+      },
+      {
+        name: '.id(1).contacts.post(...)',
+        url: `${cartBaseUri}/1/contacts/`,
+        verb: 'POST',
+        body: mockRequestBody,
+        request: () => api.cart.id(1).contacts.post(mockRequestBody)
+      },
+      {
+        name: '.id(1).contacts.id(2).patch(...)',
+        url: `${cartBaseUri}/1/contacts/2`,
+        verb: 'PATCH',
+        body: mockRequestBody,
+        request: () => api.cart.id(1).contacts.id(2).patch(mockRequestBody)
+      },
+      {
+        name: '.id(1).contacts.id(2).delete()',
+        url: `${cartBaseUri}/1/contacts/2`,
+        verb: 'DELETE',
+        request: () => api.cart.id(1).contacts.id(2).delete()
+      },
+      {
+        name: '.id(1).billTo.patch(...)',
+        url: `${cartBaseUri}/1/billTo`,
+        verb: 'PATCH',
+        body: mockRequestBody,
+        request: () => api.cart.id(1).billTo.patch(mockRequestBody)
+      },
+      {
+        name: '.id(1).shipTo.patch(...)',
+        url: `${cartBaseUri}/1/shipTo`,
+        verb: 'PATCH',
+        body: mockRequestBody,
+        request: () => api.cart.id(1).shipTo.patch(mockRequestBody)
+      },
+      {
+        name: '.id(1).confirmation.get()',
+        url: `${cartBaseUri}/1/confirmation`,
+        verb: 'GET',
+        request: () => api.cart.id(1).confirmation.get()
+      },
+      {
+        name: '.id(1).checkout.post(...)',
+        url: `${cartBaseUri}/1/checkout`,
+        verb: 'POST',
+        request: () => api.cart.id(1).checkout.post(mockRequestBody)
       }
     ]
 
     tests.forEach(t => {
       describe(`${t.name}`, () => {
-        it(`should request url ${t.url}`, () => {
-          const mock = t.mock(t.url)
-          return t.apiCall().then(() => {
-            mock.done()
+
+        it(`should issue a ${t.verb} request to ${t.url}`, () => {
+          const scope = nock(DEFAULT_OPTIONS.url)
+            .intercept(t.url, t.verb, t.body)
+            .reply(200)
+
+          return t.request().then(() => {
+            scope.done()
           })
         })
+
       })
     })
-
-    /*
-  cart.get()
-  cart.post({x:1})
-  cart.id(1).get()
-  cart.id(1).items.post({x:1})
-  cart.id(1).items.id(2).patch({x:1})
-cart.id(1).contacts.post({x:1})
-cart.id(1).contacts.id(2).patch({x:1})
-cart.id(1).contacts.id(2).delete()
-cart.id(1).billTo.patch({x:1})
-cart.id(1).shipTo.patch({x:1})
-cart.id(1).confirmation.get()
-cart.id(1).checkout.post({x:1})
-    */
   })
 })
 

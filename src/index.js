@@ -103,7 +103,7 @@ function forteApi(credentials, scope, options) {
     },
     cart: {
       get: () => {
-        return client.get(ApiPaths.cart(scope) + '/')
+        return client.get(ApiPaths.cart(scope))
       },
       post: data => {
         return client.post(ApiPaths.cart(scope) + '/', { data })
@@ -131,8 +131,8 @@ function forteApi(credentials, scope, options) {
             },
             id: contactId => {
               return {
-                delete: data => {
-                  return client.delete(ApiPaths.cart(scope) + `/${cartId}/contacts/${contactId}`, { data })
+                delete: () => {
+                  return client.delete(ApiPaths.cart(scope) + `/${cartId}/contacts/${contactId}`)
                 },
                 patch: data => {
                   return client.patch(ApiPaths.cart(scope) + `/${cartId}/contacts/${contactId}`, { data })
