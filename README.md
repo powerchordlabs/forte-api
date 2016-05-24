@@ -385,7 +385,6 @@ For example, given an API request of `POST /carts/123/items/` the corresponding 
 
 For more detail regarding Paltform API see: [Platform API docs](https://api.powerchord.io/docs)
 
-
 [build-badge]: https://img.shields.io/travis/powerchordlabs/forte-api/master.svg?style=flat-square
 [build]: https://travis-ci.org/powerchordlabs/forte-api
 
