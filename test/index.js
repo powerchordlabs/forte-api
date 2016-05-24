@@ -509,88 +509,89 @@ describe('forteApi', () => {
     })
   })
 
-  describe('api.cart', () => {
-    const cartBaseUri = ApiPaths.cart(validTrunkAndBranchScope)
+  describe('api.carts', () => {
+    const cartBaseUri = ApiPaths.carts(validTrunkAndBranchScope)
     const mockRequestBody = { mock: 'data' }
+
     const tests = [
       {
         name: '.get()',
         url: cartBaseUri,
         verb: 'GET',
-        request: () => api.cart.get()
+        request: () => api.carts.get()
       },
       {
         name: '.post(...)',
         url: cartBaseUri+'/',
         verb: 'POST',
         body: mockRequestBody,
-        request: () => api.cart.post(mockRequestBody)
+        request: () => api.carts.post(mockRequestBody)
       },
       {
         name: '.id(1).get()',
         url: `${cartBaseUri}/1`,
         verb: 'GET',
-        request: () => api.cart.id(1).get()
+        request: () => api.carts.id(1).get()
       },
       {
         name: '.id(1).items.post(...)',
         url: `${cartBaseUri}/1/items/`,
         verb: 'POST',
         body: mockRequestBody,
-        request: () => api.cart.id(1).items.post(mockRequestBody)
+        request: () => api.carts.id(1).items.post(mockRequestBody)
       },
       {
         name: '.id(1).items.id(2).patch(...)',
         url: `${cartBaseUri}/1/items/2`,
         verb: 'PATCH',
         body: mockRequestBody,
-        request: () => api.cart.id(1).items.id(2).patch(mockRequestBody)
+        request: () => api.carts.id(1).items.id(2).patch(mockRequestBody)
       },
       {
         name: '.id(1).contacts.post(...)',
         url: `${cartBaseUri}/1/contacts/`,
         verb: 'POST',
         body: mockRequestBody,
-        request: () => api.cart.id(1).contacts.post(mockRequestBody)
+        request: () => api.carts.id(1).contacts.post(mockRequestBody)
       },
       {
         name: '.id(1).contacts.id(2).patch(...)',
         url: `${cartBaseUri}/1/contacts/2`,
         verb: 'PATCH',
         body: mockRequestBody,
-        request: () => api.cart.id(1).contacts.id(2).patch(mockRequestBody)
+        request: () => api.carts.id(1).contacts.id(2).patch(mockRequestBody)
       },
       {
         name: '.id(1).contacts.id(2).delete()',
         url: `${cartBaseUri}/1/contacts/2`,
         verb: 'DELETE',
-        request: () => api.cart.id(1).contacts.id(2).delete()
+        request: () => api.carts.id(1).contacts.id(2).delete()
       },
       {
         name: '.id(1).billTo.patch(...)',
         url: `${cartBaseUri}/1/billTo`,
         verb: 'PATCH',
         body: mockRequestBody,
-        request: () => api.cart.id(1).billTo.patch(mockRequestBody)
+        request: () => api.carts.id(1).billTo.patch(mockRequestBody)
       },
       {
         name: '.id(1).shipTo.patch(...)',
         url: `${cartBaseUri}/1/shipTo`,
         verb: 'PATCH',
         body: mockRequestBody,
-        request: () => api.cart.id(1).shipTo.patch(mockRequestBody)
+        request: () => api.carts.id(1).shipTo.patch(mockRequestBody)
       },
       {
         name: '.id(1).confirmation.get()',
         url: `${cartBaseUri}/1/confirmation`,
         verb: 'GET',
-        request: () => api.cart.id(1).confirmation.get()
+        request: () => api.carts.id(1).confirmation.get()
       },
       {
         name: '.id(1).checkout.post(...)',
         url: `${cartBaseUri}/1/checkout`,
         verb: 'POST',
-        request: () => api.cart.id(1).checkout.post(mockRequestBody)
+        request: () => api.carts.id(1).checkout.post(mockRequestBody)
       }
     ]
 

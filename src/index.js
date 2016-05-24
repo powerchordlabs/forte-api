@@ -101,63 +101,63 @@ function forteApi(credentials, scope, options) {
         return client.post(ApiPaths.composite.query(scope), { data: query })
       }
     },
-    cart: {
+    carts: {
       get: () => {
-        return client.get(ApiPaths.cart(scope))
+        return client.get(ApiPaths.carts(scope))
       },
       post: data => {
-        return client.post(ApiPaths.cart(scope) + '/', { data })
+        return client.post(ApiPaths.carts(scope) + '/', { data })
       },
       id: cartId => {
         return {
           get: () => {
-            return client.get(ApiPaths.cart(scope) + `/${cartId}`)
+            return client.get(ApiPaths.carts(scope) + `/${cartId}`)
           },
           items: {
             post: data => {
-              return client.post(ApiPaths.cart(scope) + `/${cartId}/items/`, { data })
+              return client.post(ApiPaths.carts(scope) + `/${cartId}/items/`, { data })
             },
             id: itemId => {
               return {
                 patch: data => {
-                  return client.patch(ApiPaths.cart(scope) + `/${cartId}/items/${itemId}`, { data })
+                  return client.patch(ApiPaths.carts(scope) + `/${cartId}/items/${itemId}`, { data })
                 }
               }
             }
           },
           contacts: {
             post: data => {
-              return client.post(ApiPaths.cart(scope) + `/${cartId}/contacts/`, { data })
+              return client.post(ApiPaths.carts(scope) + `/${cartId}/contacts/`, { data })
             },
             id: contactId => {
               return {
                 delete: () => {
-                  return client.delete(ApiPaths.cart(scope) + `/${cartId}/contacts/${contactId}`)
+                  return client.delete(ApiPaths.carts(scope) + `/${cartId}/contacts/${contactId}`)
                 },
                 patch: data => {
-                  return client.patch(ApiPaths.cart(scope) + `/${cartId}/contacts/${contactId}`, { data })
+                  return client.patch(ApiPaths.carts(scope) + `/${cartId}/contacts/${contactId}`, { data })
                 }
               }
             }
           },
           billTo: {
             patch: data => {
-              return client.patch(ApiPaths.cart(scope) + `/${cartId}/billTo`, { data })
+              return client.patch(ApiPaths.carts(scope) + `/${cartId}/billTo`, { data })
             }
           },
           shipTo: {
             patch: data => {
-              return client.patch(ApiPaths.cart(scope) + `/${cartId}/shipTo`, { data })
+              return client.patch(ApiPaths.carts(scope) + `/${cartId}/shipTo`, { data })
             }
           },
           confirmation: {
             get: () => {
-              return client.get(ApiPaths.cart(scope) + `/${cartId}/confirmation`)
+              return client.get(ApiPaths.carts(scope) + `/${cartId}/confirmation`)
             }
           },
           checkout: {
             post: data => {
-              return client.post(ApiPaths.cart(scope) + `/${cartId}/checkout`, { data })
+              return client.post(ApiPaths.carts(scope) + `/${cartId}/checkout`, { data })
             }
           }
         }
