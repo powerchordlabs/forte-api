@@ -162,6 +162,10 @@ function forteApi(credentials, scope, options) {
           }
         }
       }
+    },
+    search(query) {
+      validateArgs('search_query', arguments)
+      return client.post(ApiPaths.search(scope), { data: query })
     }
   }
 }
@@ -304,6 +308,11 @@ const validators = {
   metrics_pageview: function metrics_pageview(data) {
     if (isEmptyObject(data)) {
       throw new InvalidArgumentError('data');
+    }
+  },
+  search_query(query) {
+    if(isEmptyObject(query)) {
+      throw new InvalidArgumentError('query')
     }
   }
 }

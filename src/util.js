@@ -56,5 +56,8 @@ export const ApiPaths = {
   },
   carts: scope => {
     return `/forte/organizations/${scope.trunk}/${scope.branch}/carts`
+  },
+  search: scope => {
+    return `/forte/search/${scope.trunk}/${scope.branch}/`
   }
 }
