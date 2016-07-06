@@ -611,6 +611,28 @@ describe('forteApi', () => {
       })
     })
   })
+
+  describe('api.seach(query)', () => {
+    const invalidQueries = [null, undefined, {}, '', () => {}]
+    invalidQueries.forEach((query) => {
+      it(`should throw for query '${JSON.stringify(query)}'`, () => {
+        assert.throws(() => { api.search(query) }, InvalidArgumentError)
+      })
+    })
+
+    const validQueries = [{bool: true}]
+
+    validQueries.forEach((query) => {
+      const expected = expectedUri(ApiPaths.search(validTrunkAndBranchScope))
+
+      it(`should POST uri: ${expected}`, () => {
+        const getSearchMock = mockapi.post(expected, 200, query)
+        return api.search(query).then(() => {
+          getSearchMock.done()
+        })
+      })
+    })
+  })
 })
 
 // only used for assert output, not actual test
