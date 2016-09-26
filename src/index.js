@@ -163,9 +163,9 @@ function forteApi(credentials, scope, options) {
         }
       }
     },
-    search(query) {
+    search(query, params) {
       validateArgs('search_query', arguments)
-      return client.post(ApiPaths.search(scope), { data: query })
+      return client.post(ApiPaths.search(scope), { params, data: query })
     }
   }
 }

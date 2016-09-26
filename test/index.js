@@ -620,14 +620,35 @@ describe('forteApi', () => {
       })
     })
 
-    const validQueries = [{bool: true}]
+    const validQueries = [{query: {bool: true}}]
 
     validQueries.forEach((query) => {
       const expected = expectedUri(ApiPaths.search(validTrunkAndBranchScope))
 
       it(`should POST uri: ${expected}`, () => {
-        const getSearchMock = mockapi.post(expected, 200, query)
-        return api.search(query).then(() => {
+        const getSearchMock = mockapi.post(expected, 200)
+
+        return api.search(query.query).then(() => {
+          getSearchMock.done()
+        })
+      })
+    })
+  })
+
+  describe('api.seach(query, params)', () => {
+    const validQueries = [
+      { params: undefined, query: { bool: true }},
+      { params: { types: 'x,y'}, query: { bool: true }},
+      { params: { types: 'x,y', from: 1, size: 10 }, query: { bool: true }}
+    ]
+
+    validQueries.forEach((query) => {
+      const expected = expectedUri(ApiPaths.search(validTrunkAndBranchScope), query.params)
+
+      it(`should POST uri: ${expected}`, () => {
+        const getSearchMock = mockapi.post(expected, 200)
+
+        return api.search(query.query, query.params).then(() => {
           getSearchMock.done()
         })
       })
@@ -637,5 +658,5 @@ describe('forteApi', () => {
 
 // only used for assert output, not actual test
 function expectedUri(path, query) {
-  return path + (query ? '?' + stringify(query) : '')
+  return path + (query && query ? '?' + stringify(query) : '')
 }
