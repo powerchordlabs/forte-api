@@ -284,6 +284,11 @@ const validators = {
       throw new InvalidArgumentError('id')
     }
   },
+  entity_byHostname(hostname) {
+    if(isInvalidString(hostname)) {
+      throw new InvalidArgumentError('hostname');
+    }
+  },
   content_getMany(type, filter) {
     if(isInvalidString(type)) {
       throw new InvalidArgumentError('type')

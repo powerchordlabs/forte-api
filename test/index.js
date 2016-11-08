@@ -278,6 +278,27 @@ describe('forteApi', () => {
 
   describe('api.organizations', () => {
 
+    describe('.getOneByHostname(hostname)', () => {
+      const invalidHostnames = [null, undefined, {}]
+      invalidHostnames.forEach((hostname) => {
+        it(`should throw for hostname '${hostname}'`, () => {
+          assert.throws(() => { api.organizations.getOneByHostname(hostname) }, InvalidArgumentError)
+        })
+      })
+
+      const validHostnames = ['www.domain.com', 'dealer.domain.com']
+      validHostnames.forEach((hostname) => {
+        const expected = expectedUri(ApiPaths.organizations.getOneByHostname(hostname))
+        it(`should GET uri: ${expected}`, () => {
+          const getOneByHostnameMock = mockapi.get(expected, 200)
+
+          return api.organizations.getOneByHostname(hostname).then(() => {
+            getOneByHostnameMock.done()
+          })
+        })
+      })
+    })
+
     describe('.getMany(filter)', () => {
       const invalidFilters = [null, undefined, {}]
       invalidFilters.forEach((filter) => {
