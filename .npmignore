@@ -1,3 +1,8 @@
 src/
 test/
 node_modules/
+.babelrc
+.editorconfig
+.eslintrc
+.npmignore
+.travis.yml
