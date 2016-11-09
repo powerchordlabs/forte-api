@@ -166,6 +166,10 @@ function forteApi(credentials, scope, options) {
     search(query, params) {
       validateArgs('search_query', arguments)
       return client.post(ApiPaths.search(scope), { params, data: query })
+    },
+    locator(query) {
+      validateArgs('locator_query', arguments)
+      return client.post(ApiPaths.locator(scope), { data: query })
     }
   }
 }
@@ -316,6 +320,11 @@ const validators = {
     }
   },
   search_query(query) {
+    if(isEmptyObject(query)) {
+      throw new InvalidArgumentError('query')
+    }
+  },
+  locator_query(query) {
     if(isEmptyObject(query)) {
       throw new InvalidArgumentError('query')
     }

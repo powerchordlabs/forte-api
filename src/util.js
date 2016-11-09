@@ -59,5 +59,8 @@ export const ApiPaths = {
   },
   search: (scope) => {
     return `/forte/search/${scope.trunk}/${scope.branch}/`
+  },
+  locator: (scope) => {
+    return `/forte/locator/${scope.trunk}`
   }
 }
