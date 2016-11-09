@@ -654,6 +654,41 @@ describe('forteApi', () => {
       })
     })
   })
+
+  describe('api.locator(query)', () => {
+    const invalidQueries = [null, undefined, {}, '', () => {}]
+    invalidQueries.forEach((query) => {
+      it(`should throw for query '${JSON.stringify(query)}'`, () => {
+        assert.throws(() => { api.search(query) }, InvalidArgumentError)
+      })
+    })
+
+    const validQueries = [
+      {
+        city: 'Saint Petersburg',
+        stateProvince: 'FL',
+        countToReturn: 100,
+        radius: 100
+      },
+      {
+        postalCode: '33701',
+        countToReturn: 5,
+        radius: 100
+      }
+    ]
+
+    validQueries.forEach((query) => {
+      const expected = expectedUri(ApiPaths.locator(validTrunkAndBranchScope))
+
+      it(`should POST uri: ${expected}`, () => {
+        const getLocatorMock = mockapi.post(expected, 200)
+
+        return api.locator(query).then(() => {
+          getLocatorMock.done()
+        })
+      })
+    })
+  })
 })
 
 // only used for assert output, not actual test
