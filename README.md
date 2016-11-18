@@ -34,8 +34,8 @@ By default ForteApi will perform a browser fingerprint on the client via a non-b
 An Isomorphic usage example:
 
 ##### server.js
-``` js
-import ForteApi from 'forte-api'
+```js
+import createApi from 'forte-api'
 
 // a global to be injected in to your html markup
 CLIENT_GLOBALS = {
@@ -43,16 +43,16 @@ CLIENT_GLOBALS = {
         trunk: 'TRUNKID'
         branch: 'BRANCHID',
     },
-    BearerToken = null;
+    BearerToken: null
 }
 
 let creds = {
-  apiPrivateKey: 'PRIVATEKEY',
-  apiPublicKey: 'PUBLICKEY',
+  privateKey: 'PRIVATEKEY',
+  publicKey: 'PUBLICKEY',
 }
 
 // create a new api instance using secret keys
-let api = ForteApi(creds, CLIENT_GLOBALS.scope)
+let api = createApi(creds, CLIENT_GLOBALS.scope)
 
 // listen for authentication events to capture the token
 api.on('auth', (err, token) => {
@@ -71,19 +71,19 @@ app.get('*', function(req, res, next) => {
 ```
 
 ##### client.js
-``` js
-import ForteApi from 'forte-api'
+```js
+import createApi from 'forte-api'
 
 // presuming CLIENT_GLOBALS was injected in your markup by the server
 let creds = { bearerToken: CLIENT_GLOBALS.BearerToken }
 
-let api = ForteApi(creds, CLIENT_GLOBALS.scope)
+let api = createApi(creds, CLIENT_GLOBALS.scope)
 
 ReactDOM.render(<App api={api} />, document.getElementById('app'));
 ```
 
 ##### app.js
-``` js
+```js
 
 let results = api.composite
     .query({...})
@@ -101,11 +101,11 @@ let results = api.composite
 
 ### Constructor
 
-#### ForteApi(credentials, scope, [options])
+#### `createApi(credentials, scope, [options])`
 Creates an instance of the Forte Api.
 
-``` js
-import ForteApi from 'forte-api'
+```js
+import createApi from 'forte-api'
 
 let scope = {
   trunk: 'TRUNKID',
@@ -113,10 +113,10 @@ let scope = {
 }
 
 // defaults
-let api = ForteApi(credentials, scope);
+let api = createApi(credentials, scope);
 
 // override api options
-let api = ForteApi(credentials, scope, options);
+let api = createApi(credentials, scope, options);
 ```
 
 ###### args
@@ -146,12 +146,11 @@ All api requests require at least a `trunk` scope and most also require a `branc
 
 The [constructor](#constructor) requires a `scope.trunk` param, but for requests requiring `branch` scope you can also use `api.withBranch()`. This is particularly useful on the server side, where you may have non-branch api calls during bootstrapping, as well as branch scoped calls during individual page requests.
 
-```js
-
+```jsx
 var creds = {...}
 var scope = { trunk: 'TRUNKID' } // note the lack of a branch
 
-var api = ForteApi(creds, scope, opts)
+var api = createApi(creds, scope, opts)
 
 // use lifecycle middleware to resolve scope
 app.use(lifecycle(api))
@@ -176,14 +175,14 @@ The identifier of the `branch` that future request should be scoped to.
 
 ```js
 var scope = { trunk: 'TRUNKID' }
-var api = ForteApi(creds, scope).withBranch('BRANCHID')
+var api = createApi(creds, scope).withBranch('BRANCHID')
 
 ```
 
 Or the equivalent:
 ```js
 var scope = { trunk: 'TRUNKID', branch: 'BRANCHID' }
-var api = ForteApi(creds, scope)
+var api = createApi(creds, scope)
 ```
 
 #### api.getScope(): {object}
@@ -201,9 +200,9 @@ The branch ID of the scope. Since only `trunk` is required, it is possible for t
 #### api.on('auth', callback(err, token))
 When the api successfully creates a new Bearer Token session this method will be invoked with the new bearerToken value. If an error occured it will be returned via the err argument.
 
-``` js
-import ForteApi from 'forte-api'
-let api = ForteApi(credentials, organization, options);
+```js
+import createApi from 'forte-api'
+let api = createApi(credentials, organization, options);
 
 api.on('auth', (err, token) => {
     if(err) {
@@ -341,7 +340,7 @@ Writes events to the platform API.
 A json object containing one or more [supported events](#supported-analytics-events).
 
 
-``` js
+```js
 api.analytics.track({
     'pageview': {
         title: 'Hello World',
@@ -358,7 +357,7 @@ The title of the page.
 * `location: {string}`
 The full url of the page excluding the hash.
 
-``` js
+```js
 api.analytics.track({
     'pageview': {
         title: 'Hello World',
