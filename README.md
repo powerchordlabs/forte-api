@@ -40,15 +40,14 @@ import createApi from 'forte-api'
 // a global to be injected in to your html markup
 CLIENT_GLOBALS = {
     scope: {
-        trunk: 'TRUNKID'
-        branch: 'BRANCHID',
-    },
-    BearerToken: null
+        trunk: 'TRUNKID',
+        branch: 'BRANCHID'
+    }   
 }
 
 let creds = {
   privateKey: 'PRIVATEKEY',
-  publicKey: 'PUBLICKEY',
+  publicKey: 'PUBLICKEY'
 }
 
 // create a new api instance using secret keys
@@ -62,7 +61,7 @@ api.on('auth', (err, token) => {
     }
 
     console.log('Api auth success:', token)
-    CLIENT_GLOBALS.BearerToken = token
+    creds.bearerToken = token
 })
 
 app.get('*', function(req, res, next) => {
