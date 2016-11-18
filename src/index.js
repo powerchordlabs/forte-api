@@ -41,6 +41,9 @@ function forteApi(credentials, scope, options) {
       validateArgs('log', arguments)
       return client.post(ApiPaths.log, { data: { level, message, meta } })
     },
+    auth() {
+      return client.post(ApiPaths.auth, { data: { email: credentials.email, password: credentials.password }})
+    },
     experience: {
       session() {
         return client.get(ApiPaths.experience.session())
@@ -207,13 +210,23 @@ const validators = {
         return
       }
 
-      if(typeof credentials.privateKey !== 'string') {
-        throw new InvalidArgumentError('credentials.privateKey')
+      if(typeof credentials.email === 'string' && typeof credentials.privateKey === 'string') {
+        throw new InvalidArgumentError('only one of publicKey/privateKey or email/password combinations may be provided.')
       }
 
-      if(typeof credentials.publicKey !== 'string') {
-        throw new InvalidArgumentError('credentials.publicKey')
+      if(typeof credentials.privateKey === 'string') {
+        if(typeof credentials.publicKey !== 'string') {
+          throw new InvalidArgumentError('credentials.publicKey')
+        }
+        return
+      } else if(typeof credentials.email === 'string'){
+        if(typeof credentials.password !== 'string') {
+          throw new InvalidArgumentError('credentials.password')
+        }
+        return
       }
+
+      throw new InvalidArgumentError('credentials in the form of a publicKey/privateKey or email/password combination must be provided.')
     }
 
     function verifyScope(scope) {

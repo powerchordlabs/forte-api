@@ -4,6 +4,7 @@ require('extend-error')
 
 export const ApiPaths = {
   log: '/developer/log',
+  auth: '/authenticate/credentials',
   experience: {
     session: function session() {
       return '/session/check';
