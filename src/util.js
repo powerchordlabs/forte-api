@@ -34,10 +34,10 @@ export const ApiPaths = {
   },
   content: {
     getMany: function getMany(scope, type) {
-      return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/';
+      return '/forte/organizations/' + scope.trunk + '/' + scope.branch + '/content/documents/' + type + '/';
     },
     getOne: function getOne(scope, type, id) {
-      return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/' + id;
+      return '/forte/organizations/' + scope.trunk + '/' + scope.branch + '/content/documents/' + type + '/' + id;
     },
     forms: {
       putDocument: function putDocument(scope) {
