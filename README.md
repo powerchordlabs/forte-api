@@ -346,7 +346,7 @@ api.content.getManyComplex('PRODUCT', { pagination: { perPage: 10, page: 0 }, va
   // Available Pagination Headers
   // Powerchord-Pagination-Desc:false
   // Powerchord-Pagination-Page:0
-  // Powerchord-Pagination-Pagecount:1
+  // Powerchord-Pagination-Pagecount:4
   // Powerchord-Pagination-Perpage:10
   // Powerchord-Pagination-Resultcount:40
   // Powerchord-Pagination-Sortby:title
