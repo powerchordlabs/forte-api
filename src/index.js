@@ -78,6 +78,16 @@ function forteApi(credentials, scope, options) {
       }
     },
     content: {
+      aggregate: function aggregate(type, list, aggregate) {
+        validateArgs('content_aggregate', arguments);
+        return client.post(_util.ApiPaths.content.aggregate(scope, type), { data: { list, aggregate } } );
+      },
+      getManyComplex: function getManyComplex(type, filter) {
+        validateArgs('content_getManyComplex', arguments);
+        return client.post(_util.ApiPaths.content.getMany(scope, type), {
+          data: filter,
+        });
+      },
       getMany(type, filter) {
         validateArgs('content_getMany', arguments)
         return client.get(ApiPaths.content.getMany(scope, type), { params: filter })
@@ -304,6 +314,25 @@ const validators = {
   entity_byHostname(hostname) {
     if(isInvalidString(hostname)) {
       throw new InvalidArgumentError('hostname');
+    }
+  },
+  content_aggregate(type, list, aggregate) {
+    if(isInvalidString(type)) {
+      throw new InvalidArgumentError('type')
+    }
+    if(isEmptyObject(list)) {
+      throw new InvalidArgumentError('list')
+    }
+    if(isEmptyObject(aggregate)) {
+      throw new InvalidArgumentError('aggregate')
+    }
+  },
+  content_getManyComplex(type, filter) {
+    if(isInvalidString(type)) {
+      throw new InvalidArgumentError('type')
+    }
+    if(isEmptyObject(filter)) {
+      throw new InvalidArgumentError('filter')
     }
   },
   content_getMany(type, filter) {
