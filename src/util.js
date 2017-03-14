@@ -33,6 +33,9 @@ export const ApiPaths = {
     }
   },
   content: {
+    aggregate: function aggregate(scope, type) {
+      return '/forte/organizations/' + scope.trunk + '/' + scope.branch + '/content/documents/' + type + '/aggregate/';
+    },
     getMany: function getMany(scope, type) {
       return '/forte/' + scope.trunk + '/' + scope.branch + '/content/' + type + '/';
     },
