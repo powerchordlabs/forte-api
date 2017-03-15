@@ -316,6 +316,25 @@ const validators = {
       throw new InvalidArgumentError('hostname');
     }
   },
+  content_aggregate(type, list, aggregate) {
+    if(isInvalidString(type)) {
+      throw new InvalidArgumentError('type')
+    }
+    if(isEmptyObject(list)) {
+      throw new InvalidArgumentError('list')
+    }
+    if(isEmptyObject(aggregate)) {
+      throw new InvalidArgumentError('aggregate')
+    }
+  },
+  content_getManyComplex(type, filter) {
+    if(isInvalidString(type)) {
+      throw new InvalidArgumentError('type')
+    }
+    if(isEmptyObject(filter)) {
+      throw new InvalidArgumentError('filter')
+    }
+  },
   content_getMany(type, filter) {
     if(isInvalidString(type)) {
       throw new InvalidArgumentError('type')

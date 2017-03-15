@@ -329,6 +329,62 @@ api.locations.getOne('PRODUCT', '1').then((response) => {
 })
 ```
 
+##### api.content.getManyComplex(type, filter): [{content}, ...]
+Returns an array of content objects matching the `type` and `filter` option(s).
+
+###### args:
+* `type: {string}`
+The type of content to get.
+* `filter: {Object}`
+A json object that is used to filter results from the api.
+
+```js
+// return all items that have values.showProducts = true paged with 10 per page
+api.content.getManyComplex('PRODUCT', { pagination: { perPage: 10, page: 0 }, valuesFields: { showProducts: { equals: true } }}).then((response) => {
+  console.log('headers:', response.header) // contains paging information
+
+  // Available Pagination Headers
+  // Powerchord-Pagination-Desc:false
+  // Powerchord-Pagination-Page:0
+  // Powerchord-Pagination-Pagecount:4
+  // Powerchord-Pagination-Perpage:10
+  // Powerchord-Pagination-Resultcount:40
+  // Powerchord-Pagination-Sortby:title
+
+  console.log('content items:', response.data)
+})
+```
+
+##### api.content.aggregate(type, listFilter, aggregate): [{content}, ...]
+Returns an object of results objects matching the `type` and `filter` option(s).
+
+###### args:
+* `type: {string}`
+The type of content to get.
+* `listFilter: {Object}`
+A json object that is used to filter results from the api.
+* `aggregate: {Object}`
+A json object that is used to specify the value fields to perform an aggregate on.
+
+```js
+// return aggregate values for the description value in the values.specifications collection
+api.content.aggregate('PRODUCT',
+{
+  valuesFields: {
+    showProduct: {
+      equals:true
+    }
+  }
+},
+{
+  parent:"specifications",
+  category:"description",
+  key:"value"
+}).then((response) => {
+  console.log('aggregate items:', response.data)
+})
+```
+
 #### Analytics
 ##### api.analytics.track(events)
 

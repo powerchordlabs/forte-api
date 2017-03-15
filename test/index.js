@@ -448,6 +448,47 @@ describe('forteApi', () => {
         })
       })
     })
+
+    describe('.getManyComplex(type, filter)', () => {
+      const invalidTypes = [null, undefined, {}, '']
+      invalidTypes.forEach((type) => {
+        it(`should throw for type '${JSON.stringify(type)}'`, () => {
+          assert.throws(() => { api.content.getManyComplex(type, { status: 'active' }) }, InvalidArgumentError)
+        })
+      })
+
+      const invalidFilters = [null, undefined, {}, '']
+      invalidFilters.forEach((filter) => {
+        it(`should throw for filter '${JSON.stringify(filter)}'`, () => {
+          assert.throws(() => { api.content.getManyComplex('products', filter) }, InvalidArgumentError)
+        })
+      })
+    })
+
+    describe('.aggregate(type, list, aggregate)', () => {
+      const invalidTypes = [null, undefined, {}, '']
+      invalidTypes.forEach((type) => {
+        it(`should throw for type '${JSON.stringify(type)}'`, () => {
+          assert.throws(() => { api.content.aggregate(type, {}, {}) }, InvalidArgumentError)
+        })
+      })
+
+      const invalidLists = [null, undefined, '', {}]
+      invalidLists.forEach((list) => {
+        it(`should throw for list '${JSON.stringify(list)}'`, () => {
+          assert.throws(() => { api.content.aggregate('product', list, { test: ''}) }, InvalidArgumentError)
+        })
+      })
+
+      const invalidAggregates = [null, undefined, '', {}]
+      invalidAggregates.forEach((aggregate) => {
+        it(`should throw for aggregate '${JSON.stringify(aggregate)}'`, () => {
+          assert.throws(() => { api.content.aggregate('product', { test: ''}, aggregate ) }, InvalidArgumentError)
+        })
+      })
+      
+    })
+    
   })
 
   describe('api.composite', () => {
