@@ -84,7 +84,7 @@ function forteApi(credentials, scope, options) {
       },
       getManyComplex: function getManyComplex(type, filter) {
         validateArgs('content_getManyComplex', arguments);
-        return client.post(ApiPaths.content.getMany(scope, type), {
+        return client.post(ApiPaths.content.getManyComplex(scope, type), {
           data: filter,
         });
       },
