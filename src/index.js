@@ -78,6 +78,16 @@ function forteApi(credentials, scope, options) {
       }
     },
     content: {
+      aggregate: function aggregate(type, list, aggregate) {
+        validateArgs('content_aggregate', arguments);
+        return client.post(ApiPaths.content.aggregate(scope, type), { data: { list, aggregate } } );
+      },
+      getManyComplex: function getManyComplex(type, filter) {
+        validateArgs('content_getManyComplex', arguments);
+        return client.post(ApiPaths.content.getMany(scope, type), {
+          data: filter,
+        });
+      },
       getMany(type, filter) {
         validateArgs('content_getMany', arguments)
         return client.get(ApiPaths.content.getMany(scope, type), { params: filter })
