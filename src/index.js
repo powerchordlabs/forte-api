@@ -80,11 +80,11 @@ function forteApi(credentials, scope, options) {
     content: {
       aggregate: function aggregate(type, list, aggregate) {
         validateArgs('content_aggregate', arguments);
-        return client.post(_util.ApiPaths.content.aggregate(scope, type), { data: { list, aggregate } } );
+        return client.post(ApiPaths.content.aggregate(scope, type), { data: { list, aggregate } } );
       },
       getManyComplex: function getManyComplex(type, filter) {
         validateArgs('content_getManyComplex', arguments);
-        return client.post(_util.ApiPaths.content.getMany(scope, type), {
+        return client.post(ApiPaths.content.getMany(scope, type), {
           data: filter,
         });
       },
