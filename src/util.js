@@ -21,7 +21,7 @@ export const ApiPaths = {
       return '/organizations/' + id;
     },
     getOneByHostname: function getOneByHostname(hostname) {
-      return '/organizations?hostname=' + hostname;
+      return '/organizations?status=active&hasExperience=true&hostname=' + hostname;
     }
   },
   locations: {
